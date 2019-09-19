@@ -1,4 +1,4 @@
-package JogoCodigo;
+package jogoCodigo;
 
 public class Mago extends Personagem {
 
@@ -9,9 +9,10 @@ public class Mago extends Personagem {
 
     @Override
     public void treinar() {
-        inteligencia += level*3;
+        inteligencia += nivel*3;
+        this.aumentaXP(nivel*10);
         forca++;
-        this.maxHp += level*19;
+        this.maxHP += nivel*19;
     }
 
     @Override

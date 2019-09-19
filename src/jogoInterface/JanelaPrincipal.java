@@ -1,7 +1,8 @@
-package JogoCodigo;
+package jogoInterface;
 
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
+import jogoCodigo.*;
 
 public class JanelaPrincipal extends JFrame {
 
@@ -12,33 +13,43 @@ public class JanelaPrincipal extends JFrame {
         tAreaLog.setText(texto + "\n" + tAreaLog.getText());
     }
     
-    public void alteraHP(int valor){
-        if (valor > 0) this.p.aumentaHP(valor);
-        else this.p.diminuiHP(-valor);
-        
-        this.labelHP.setText(String.format("%d", this.p.getHp()));
-        this.barraHP.setValue(p.getHp());
-    }
-    
-    public void alteraXP(int valor){
-        this.p.aumentaXP(valor);
-        this.labelXP.setText(String.format("%d", this.p.getXp()));
-        this.barraXP.setValue(p.getXp());
-    }
-    
     public JanelaPrincipal(Personagem p) {   
         initComponents();
         this.p = p;
         
         this.p.setListener(new Personagem.AtributosListener(){
             
+            @Override
+            public void alteraHP(){
+                labelHP.setText(String.format("%d", p.getHp()));
+                int novoHP = (int) (((float) p.getHp()/p.getMaxHP())*100);
+                barraHP.setValue(novoHP);
+            }
+
+            @Override
+            public void alteraXP(){
+                labelXP.setText(String.format("%d", p.getXp()));
+                barraXP.setValue(p.getXp());
+            }
+
+            @Override
+            public void alteraNivel(){
+                labelNivel.setText(String.format("%d", p.getNivel()));
+                atualizaLog(p.getApelido() + " subiu de nível!");
+            }
+
+            @Override
+            public void alteraMaxHP(){
+                barraXP.setMaximum(p.getMaxHP());
+            }
+
         });
         
         this.labelNome.setText(this.p.getApelido());
         this.labelClasse.setText(this.p.getClass().getSimpleName());
-        this.labelNivel.setText(String.format("%d", this.p.getLevel()));  
-        this.alteraHP(0);
-        this.alteraXP(0);
+        this.labelNivel.setText(String.format("%d", this.p.getNivel()));  
+        this.p.aumentaHP(0);
+        this.p.aumentaXP(0);
         
         ThreadDeBatalha tb = new ThreadDeBatalha(p);
         tb.start();
@@ -46,6 +57,8 @@ public class JanelaPrincipal extends JFrame {
             @Override
             public void battleEnd() {
                 atualizaLog("A batalha terminou!");
+                atualizaLog("A vida de " + p.getApelido() + " foi " + 
+                    "restaurada e adquiriu " + p.getNivel()*10 + " pontos de XP.");
             }
 
             @Override
@@ -54,10 +67,19 @@ public class JanelaPrincipal extends JFrame {
                         " de HP e o inimigo " + in.getApelido() +
                         " tem " + in.getHp() + " de HP.");
             }
-            
+
             @Override
-            public void lostHP(int valor){
-                alteraHP(-valor);
+            public void enemyFound(Personagem in){
+                atualizaLog("HP: " + in.getHp());
+                atualizaLog("NOME: " + in.getApelido());
+                atualizaLog("Um inimigo foi localizado! Prepare-se!");
+            }
+
+            @Override
+            public void playerRunAway(){
+                atualizaLog("Fugir no meio de uma batalha não é legal!");
+                atualizaLog("Você perdeu 10 pontos de XP pela sua covardia.");
+                p.diminuiXP(10);
             }
         });
         
@@ -116,7 +138,7 @@ public class JanelaPrincipal extends JFrame {
 
         fxLabel3.setText("Nível do personagem:");
 
-        labelNivel.setText("[NÍVEL]");
+        labelNivel.setText("[NIVEL]");
 
         fxLabel4.setText("HP:");
 
