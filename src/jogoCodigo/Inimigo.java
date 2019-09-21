@@ -13,7 +13,7 @@ public class Inimigo extends Personagem {
     public void treinar(){}
 
     @Override
-    public void ataque(Personagem p) {
+    public void ataque(Personagem p, Ataque a) {
         p.diminuiHP(this.forca);
     }
 }

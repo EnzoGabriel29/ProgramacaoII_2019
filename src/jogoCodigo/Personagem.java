@@ -1,7 +1,8 @@
 package jogoCodigo;
 
 public abstract class Personagem {
-    private AtributosListener listener;
+    protected AtributosListener listener;
+    private Ataque[] ataques;
     private String apelido;
     protected int hp;
     protected int forca;
@@ -13,6 +14,7 @@ public abstract class Personagem {
     public Personagem(String apelido) {
         this.apelido = apelido;
         this.hp = 100;
+        this.ataques = new Ataque[3];
         this.xp = 0;
         this.maxHP = 100;
         this.forca = 10;
@@ -23,15 +25,20 @@ public abstract class Personagem {
             @Override public void alteraXP(){}
             @Override public void alteraNivel(){}
             @Override public void alteraMaxHP(){}
+            @Override public void ataca(Ataque a, Personagem in){}
         };
     }
     
     public Personagem() {
-        this("missingno");
+        this("fulano");
     }
     
     public abstract void treinar();
-    public abstract void ataque(Personagem p);
+    public abstract void ataque(Personagem p, Ataque a);
+    
+    public void defineAtaque(Ataque a, int pos){
+        this.ataques[pos] = a;
+    }
     
     public void setListener(AtributosListener l){
         this.listener = l;
@@ -103,6 +110,10 @@ public abstract class Personagem {
     public int getInteligencia(){
         return inteligencia;
     }
+    
+    public Ataque getAtaque(int pos){
+        return ataques[pos];
+    }
 
     public void defineMaxHP(int valor){
         this.maxHP = valor;
@@ -114,6 +125,7 @@ public abstract class Personagem {
         public void alteraXP();
         public void alteraMaxHP();
         public void alteraNivel();
+        public void ataca(Ataque a, Personagem in);
     }
     
 }

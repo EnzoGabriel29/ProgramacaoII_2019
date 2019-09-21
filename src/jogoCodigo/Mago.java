@@ -5,6 +5,7 @@ public class Mago extends Personagem {
     public Mago(String apelido) {
         super(apelido);
         this.inteligencia = 20;
+        this.defineAtaque(new Ataque("Congelar", 30), 0);
     }
 
     @Override
@@ -16,8 +17,9 @@ public class Mago extends Personagem {
     }
 
     @Override
-    public void ataque(Personagem p) {
-        p.diminuiHP(this.inteligencia);
+    public void ataque(Personagem p, Ataque a) {
+        p.diminuiHP(a.getDano());
+        listener.ataca(a, p);
     }
     
 }

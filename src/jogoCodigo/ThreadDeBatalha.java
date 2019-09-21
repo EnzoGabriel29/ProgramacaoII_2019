@@ -6,24 +6,32 @@ public class ThreadDeBatalha extends Thread {
     private int cont = 0;
     private Personagem personagem;
     private BattleActionListener listener;
-    private boolean isPausar = true;
+    private boolean isBatalha = false;
+    private boolean aguardandoAtaque = false;
+    private Ataque ataqueAtual;
 
     public ThreadDeBatalha(Personagem personagem){
         this.personagem = personagem;
         this.listener = new BattleActionListener(){
-            @Override public void battleEnd(){}
-            @Override public void roundEnd(Personagem p, Personagem i){}
-            @Override public void enemyFound(Personagem in){}
-            @Override public void playerRunAway(){}
+            @Override public void terminaBatalha(){}
+            @Override public void terminaRodada(Personagem p, Personagem i){}
+            @Override public void inimigoEncontrado(Personagem in){}
+            @Override public void jogadorFugiu(){}
+            @Override public void aguardaAtaque(){}
         };
     }
     
     public void ativar(){
-        isPausar = false;
+        this.isBatalha = true;
     }
     
     public void desativar(){
-        isPausar = true;
+        this.isBatalha = false;
+    }
+    
+    public void defineAtaque(Ataque a){
+        this.ataqueAtual = a;
+        this.aguardandoAtaque = false;
     }
         
     public void aguarda(int valor){
@@ -42,39 +50,47 @@ public class ThreadDeBatalha extends Thread {
     @Override
     public void run(){
         while (true){
-            if (!isPausar){                       
+            System.out.print("");
+            if (isBatalha){                     
                 Inimigo in = retornaInimigo();
                 aguarda(5);
-                if (isPausar) continue;
-                listener.enemyFound(in);
+                if (!isBatalha) continue;
+                listener.inimigoEncontrado(in);
                 aguarda(3);
-                if (isPausar){
-                    listener.playerRunAway();
+                if (!isBatalha){
+                    listener.jogadorFugiu();
                     continue;
                 }
 
-                while (in.getHp() > 0 && personagem.getHp() > 0){
-                    if (isPausar){
-                        listener.playerRunAway();
-                        break;
+                while (in.getHp() > 0 && personagem.getHp() > 0){                    
+                    in.ataque(personagem, new Ataque("Padrão", 20));
+                    
+                    listener.aguardaAtaque();
+                    aguardandoAtaque = true;
+                    while (aguardandoAtaque){
+                        if (!isBatalha){
+                            listener.jogadorFugiu();
+                            break;
+                        }
+                        System.out.println("ok");
                     }
                     
-                    in.ataque(personagem);
-                    personagem.ataque(in);
+                    if (!isBatalha) break;
                     
-                    listener.roundEnd(personagem, in);
+                    personagem.ataque(in, ataqueAtual);
+                    listener.terminaRodada(personagem, in);
                     
                     aguarda(1);
                 }
                 
-                if (isPausar) continue;
+                if (!isBatalha) continue;
                 
                 if (personagem.getHp() > 0)
                     this.personagem.treinar();
 
                 personagem.restauraHP();
 
-                listener.battleEnd();
+                listener.terminaBatalha();
             }
         }
     }
@@ -84,10 +100,11 @@ public class ThreadDeBatalha extends Thread {
     }
     
     public static interface BattleActionListener {
-        public void battleEnd();
-        public void roundEnd(Personagem p, Personagem in);
-        public void enemyFound(Personagem in);
-        public void playerRunAway();
+        public void terminaBatalha();
+        public void terminaRodada(Personagem p, Personagem in);
+        public void inimigoEncontrado(Personagem in);
+        public void jogadorFugiu();
+        public void aguardaAtaque();
     }
     
 }
