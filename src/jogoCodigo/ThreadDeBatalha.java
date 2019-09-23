@@ -40,10 +40,9 @@ public class ThreadDeBatalha extends Thread {
     }
 
     public Inimigo retornaInimigo(){
-        String[] inimigos = {"Dragão", "Trasgo",
-            "Bolsonaro", "Ogro", "Gigante"};
+        String[] inimigos = {"Dragão", "Trasgo", "Ogro", "Gigante", "Bruxa"};
 
-        int al = (int)(Math.random()*10) % 5;
+        int al = (int)(Math.random()*5);
         return new Inimigo(inimigos[al], this.personagem.getNivel());
     }
 
@@ -62,17 +61,18 @@ public class ThreadDeBatalha extends Thread {
                     continue;
                 }
 
-                while (in.getHp() > 0 && personagem.getHp() > 0){                    
+                while (in.getHp() > 0 && personagem.getHp() > 0){
+                    System.out.print("");
                     in.ataque(personagem, new Ataque("Padrão", 20));
                     
                     listener.aguardaAtaque();
                     aguardandoAtaque = true;
                     while (aguardandoAtaque){
+                        System.out.print("");
                         if (!isBatalha){
                             listener.jogadorFugiu();
                             break;
                         }
-                        System.out.println("ok");
                     }
                     
                     if (!isBatalha) break;

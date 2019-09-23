@@ -6,6 +6,7 @@ public abstract class Personagem {
     private String apelido;
     protected int hp;
     protected int forca;
+    protected int fome;
     protected int inteligencia;
     protected int maxHP;
     protected int nivel;
@@ -19,14 +20,28 @@ public abstract class Personagem {
         this.maxHP = 100;
         this.forca = 10;
         this.nivel = 1;
+        this.fome = 0;
 
         this.listener = new AtributosListener(){
             @Override public void alteraHP(){}
             @Override public void alteraXP(){}
             @Override public void alteraNivel(){}
             @Override public void alteraMaxHP(){}
+            @Override public void alteraFome(){}
             @Override public void ataca(Ataque a, Personagem in){}
         };
+        
+        new Thread(new Runnable(){
+            @Override
+            public void run(){
+                while (true){
+                    try { Thread.sleep(60000);
+                    } catch (InterruptedException e){}
+                    
+                    aumentaFome(5);
+                }
+            }
+        }).start();   
     }
     
     public Personagem() {
@@ -79,6 +94,18 @@ public abstract class Personagem {
         listener.alteraHP();
     }
     
+    public void aumentaFome(int valor){
+        this.fome += valor;
+        if (this.fome > 100) this.fome = 100;
+        listener.alteraFome();
+    }
+    
+    public void diminuiFome(int valor){
+        this.fome -= valor;
+        if (this.fome < 0) this.fome = 0;
+        listener.alteraFome();
+    }
+    
     public void restauraHP(){
         aumentaHP(this.maxHP - this.hp);
     }
@@ -103,6 +130,10 @@ public abstract class Personagem {
         return maxHP;
     }
 
+    public int getFome(){
+        return fome;
+    }
+    
     public int getForca(){
         return forca;
     }
@@ -125,6 +156,7 @@ public abstract class Personagem {
         public void alteraXP();
         public void alteraMaxHP();
         public void alteraNivel();
+        public void alteraFome();
         public void ataca(Ataque a, Personagem in);
     }
     

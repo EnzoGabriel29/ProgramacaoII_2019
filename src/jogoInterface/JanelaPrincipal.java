@@ -3,85 +3,96 @@ package jogoInterface;
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import jogoCodigo.*;
 
 public class JanelaPrincipal extends JFrame {
-    public static String getStringAtaque(Ataque a){
-        return "<html><center><p style=\"font-size:12px\">"
-                + a.getNome() + "</p><br><p>" +
-                a.getDano() + " HP</p></center></html>";
-    }
     
     public static String getStringDupla(String p1, String p2){
         return "<html><center>" + p1 + "<br>" + p2 + "</center></html>";
     }
     
     public ThreadDeBatalha tb;
-    private int contador = 0;
-    private Personagem p;
+    private Personagem personagem;
     
     public void atualizaLog(String texto){
         tAreaLog.setText(texto + "\n" + tAreaLog.getText());
     }
     
+    public void defineBatalha(){
+        
+    }
+    
     public JanelaPrincipal(Personagem p) {   
         initComponents();
-        this.p = p;
+        this.personagem = p;
         
-        this.p.setListener(new Personagem.AtributosListener(){
+        this.personagem.setListener(new Personagem.AtributosListener(){
             @Override
             public void alteraHP(){
-                labelHP.setText(String.format("%d", JanelaPrincipal.this.p.getHp()));
-                int novoHP = (int) (((float) JanelaPrincipal.this.p.getHp()/
-                        JanelaPrincipal.this.p.getMaxHP())*100);
+                labelHP.setText(String.format("%d", personagem.getHp()));
+                int novoHP = (int) (((float) personagem.getHp()/
+                        personagem.getMaxHP())*100);
                 barraHP.setValue(novoHP);
             }
 
             @Override
             public void alteraXP(){
-                labelXP.setText(String.format("%d", JanelaPrincipal.this.p.getXp()));
-                barraXP.setValue(JanelaPrincipal.this.p.getXp());
+                labelXP.setText(String.format("%d", personagem.getXp()));
+                barraXP.setValue(personagem.getXp());
             }
 
             @Override
             public void alteraNivel(){
-                labelNivel.setText(String.format("%d", JanelaPrincipal.this.p.getNivel()));
-                atualizaLog(JanelaPrincipal.this.p.getApelido() + " subiu de nível!");
+                labelNivel.setText(String.format("%d", personagem.getNivel()));
+                atualizaLog(personagem.getApelido() + " subiu de nível!");
             }
 
             @Override
             public void alteraMaxHP(){
-                barraXP.setMaximum(JanelaPrincipal.this.p.getMaxHP());
+                barraXP.setMaximum(personagem.getMaxHP());
+            }
+            
+            @Override
+            public void alteraFome(){
+                barraFome.setValue(personagem.getFome());
+                labelFome.setText(String.format("%d", personagem.getFome()));
             }
             
             @Override
             public void ataca(Ataque a, Personagem in){
-                atualizaLog(JanelaPrincipal.this.p.getApelido() + " utilizou "
+                atualizaLog(personagem.getApelido() + " utilizou "
                         + a.getNome() + " e causou um dano de " + a.getDano() +
                         " HP em " + in.getApelido() + "!");
             }
         });
         
-        this.labelNome.setText(this.p.getApelido());
-        this.labelClasse.setText(this.p.getClass().getSimpleName());
-        this.labelNivel.setText(String.format("%d", this.p.getNivel()));  
-        this.p.aumentaHP(0);
-        this.p.aumentaXP(0);
+        this.labelNome.setText(this.personagem.getApelido());
+        this.labelClasse.setText(this.personagem.getClass().getSimpleName());
+        this.labelNivel.setText(String.format("%d", this.personagem.getNivel()));
+        this.labelFome.setText(String.format("%d", this.personagem.getFome()));
+        this.personagem.aumentaHP(0);
+        this.personagem.aumentaXP(0);
+        this.personagem.aumentaFome(0);
         this.btnAtaque1.setEnabled(false);
         this.btnAtaque2.setEnabled(false);
         this.btnAtaque3.setEnabled(false);
         
-        Ataque a1 = this.p.getAtaque(0);
-        if (a1 != null) this.btnAtaque1.setText(getStringDupla(a1.getNome(),
-                String.format("%d HP", a1.getDano())));
+        Ataque a1 = this.personagem.getAtaque(0);
+        if (a1 != null) this.btnAtaque1.setText(getStringDupla(
+                a1.getNome(), String.format("%d HP", a1.getDano())));
         else this.btnAtaque1.setText("VAZIO");
         
-        Ataque a2 = this.p.getAtaque(1);
-        if (a2 != null) this.btnAtaque2.setText(getStringAtaque(a2));
+        Ataque a2 = this.personagem.getAtaque(1);
+        if (a2 != null) this.btnAtaque2.setText(getStringDupla(
+                a2.getNome(), String.format("%d HP", a2.getDano())));
         else this.btnAtaque2.setText("VAZIO");
         
-        Ataque a3 = this.p.getAtaque(2);
-        if (a3 != null) this.btnAtaque3.setText(getStringAtaque(a3));
+        Ataque a3 = this.personagem.getAtaque(2);
+        if (a3 != null) this.btnAtaque3.setText(getStringDupla(
+                a3.getNome(), String.format("%d HP", a3.getDano())));
         else this.btnAtaque3.setText("VAZIO");
         
         this.tb = new ThreadDeBatalha(p);
@@ -90,9 +101,9 @@ public class JanelaPrincipal extends JFrame {
             @Override
             public void terminaBatalha() {
                 atualizaLog("A batalha terminou!");
-                atualizaLog("A vida de " + JanelaPrincipal.this.p.getApelido() +
+                atualizaLog("A vida de " + personagem.getApelido() +
                         " foi " + "restaurada e foram adquiridos " + 
-                        JanelaPrincipal.this.p.getNivel()*10 + " pontos de XP.");
+                        personagem.getNivel()*10 + " pontos de XP.");
             }
 
             @Override
@@ -115,16 +126,16 @@ public class JanelaPrincipal extends JFrame {
                 btnAtaque2.setEnabled(false);
                 btnAtaque3.setEnabled(false);
                 atualizaLog("Fugir no meio de uma batalha não é legal!");
-                atualizaLog("Você perdeu 10 pontos de XP pela sua covardia.");
-                JanelaPrincipal.this.p.diminuiXP(10);
+                atualizaLog("Você perdeu 10 pontos de XP.");
+                personagem.diminuiXP(10);
             }
             
             @Override
             public void aguardaAtaque(){
                 atualizaLog("Escolha um ataque para seu inimigo.");
-                if(JanelaPrincipal.this.p.getAtaque(0) != null) btnAtaque1.setEnabled(true);
-                if(JanelaPrincipal.this.p.getAtaque(1) != null) btnAtaque1.setEnabled(true);
-                if(JanelaPrincipal.this.p.getAtaque(2) != null) btnAtaque1.setEnabled(true);
+                if (personagem.getAtaque(0) != null) btnAtaque1.setEnabled(true);
+                if (personagem.getAtaque(1) != null) btnAtaque1.setEnabled(true);
+                if (personagem.getAtaque(2) != null) btnAtaque1.setEnabled(true);
             }
         });
         
@@ -149,8 +160,7 @@ public class JanelaPrincipal extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e){
                 atualizaLog(String.format("FORÇA: %d\nINTELIGÊNCIA: %d",
-                        JanelaPrincipal.this.p.getForca(),
-                        JanelaPrincipal.this.p.getInteligencia()));
+                        personagem.getForca(), personagem.getInteligencia()));
             }
         });
         
@@ -164,7 +174,7 @@ public class JanelaPrincipal extends JFrame {
         this.btnAtaque1.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                tb.defineAtaque(JanelaPrincipal.this.p.getAtaque(0));
+                tb.defineAtaque(personagem.getAtaque(0));
                 btnAtaque1.setEnabled(false);
                 btnAtaque2.setEnabled(false);
                 btnAtaque3.setEnabled(false);
@@ -174,7 +184,7 @@ public class JanelaPrincipal extends JFrame {
         this.btnAtaque2.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                tb.defineAtaque(JanelaPrincipal.this.p.getAtaque(1));
+                tb.defineAtaque(personagem.getAtaque(1));
                 btnAtaque1.setEnabled(false);
                 btnAtaque2.setEnabled(false);
                 btnAtaque3.setEnabled(false);
@@ -184,7 +194,7 @@ public class JanelaPrincipal extends JFrame {
         this.btnAtaque3.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                tb.defineAtaque(JanelaPrincipal.this.p.getAtaque(2));
+                tb.defineAtaque(personagem.getAtaque(2));
                 btnAtaque1.setEnabled(false);
                 btnAtaque2.setEnabled(false);
                 btnAtaque3.setEnabled(false);
@@ -197,6 +207,10 @@ public class JanelaPrincipal extends JFrame {
     private void initComponents() {
 
         jButton2 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         tAreaLog = new javax.swing.JTextArea();
         fxLabel1 = new javax.swing.JLabel();
@@ -219,8 +233,29 @@ public class JanelaPrincipal extends JFrame {
         btnAtaque1 = new javax.swing.JButton();
         btnAtaque3 = new javax.swing.JButton();
         btnAtaque2 = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        fxLabel6 = new javax.swing.JLabel();
+        barraFome = new javax.swing.JProgressBar();
+        labelFome = new javax.swing.JLabel();
+        btnUsarItem = new javax.swing.JButton();
 
         jButton2.setText("jButton2");
+
+        jScrollPane2.setViewportView(jTextPane1);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(jTable1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -270,7 +305,7 @@ public class JanelaPrincipal extends JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(btnAtaque1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAtaque2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnAtaque2, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAtaque3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -281,22 +316,77 @@ public class JanelaPrincipal extends JFrame {
             .addComponent(btnAtaque3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Item", "Comida", "Poção", "Ataque"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane4.setViewportView(jTable2);
+        if (jTable2.getColumnModel().getColumnCount() > 0) {
+            jTable2.getColumnModel().getColumn(0).setResizable(false);
+            jTable2.getColumnModel().getColumn(1).setResizable(false);
+            jTable2.getColumnModel().getColumn(2).setResizable(false);
+            jTable2.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        fxLabel6.setText("FOME:");
+
+        labelFome.setText("[FOME]");
+
+        btnUsarItem.setText("Utilizar item");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(fxLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(barraXP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelXP))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(fxLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -310,18 +400,30 @@ public class JanelaPrincipal extends JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(labelNivel))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(fxLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(barraHP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelHP)))
-                        .addGap(130, 130, 130)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fxLabel6)
+                                    .addComponent(fxLabel5)
+                                    .addComponent(fxLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(barraHP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(barraXP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(barraFome, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnTreinar, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                            .addComponent(btnBatalhar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAtributos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnLimpaLog, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(labelHP)
+                            .addComponent(labelXP)
+                            .addComponent(labelFome))
+                        .addGap(38, 38, 38)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnLimpaLog, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnBatalhar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnTreinar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnAtributos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnUsarItem, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -330,46 +432,56 @@ public class JanelaPrincipal extends JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(fxLabel1)
-                            .addComponent(labelNome))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(fxLabel2)
-                            .addComponent(labelClasse))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(fxLabel3)
-                            .addComponent(labelNivel))
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fxLabel4)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(labelHP)
-                                .addComponent(barraHP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(fxLabel5)
-                            .addComponent(barraXP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(labelXP)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnTreinar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBatalhar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAtributos)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLimpaLog)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(fxLabel1)
+                                    .addComponent(labelNome))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(fxLabel2)
+                                    .addComponent(labelClasse))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(fxLabel3)
+                                    .addComponent(labelNivel))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fxLabel4)
+                                    .addComponent(barraHP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(labelHP))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fxLabel5)
+                                    .addComponent(barraXP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(labelXP))
+                                .addGap(11, 11, 11)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(fxLabel6)
+                                    .addComponent(barraFome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(labelFome)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnTreinar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnBatalhar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnAtributos)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnLimpaLog)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnUsarItem)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar barraFome;
     private javax.swing.JProgressBar barraHP;
     private javax.swing.JProgressBar barraXP;
     private javax.swing.JButton btnAtaque1;
@@ -379,15 +491,24 @@ public class JanelaPrincipal extends JFrame {
     private javax.swing.JButton btnBatalhar;
     private javax.swing.JButton btnLimpaLog;
     private javax.swing.JButton btnTreinar;
+    private javax.swing.JButton btnUsarItem;
     private javax.swing.JLabel fxLabel1;
     private javax.swing.JLabel fxLabel2;
     private javax.swing.JLabel fxLabel3;
     private javax.swing.JLabel fxLabel4;
     private javax.swing.JLabel fxLabel5;
+    private javax.swing.JLabel fxLabel6;
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
+    private javax.swing.JTextPane jTextPane1;
     private javax.swing.JLabel labelClasse;
+    private javax.swing.JLabel labelFome;
     private javax.swing.JLabel labelHP;
     private javax.swing.JLabel labelNivel;
     private javax.swing.JLabel labelNome;
