@@ -3,9 +3,6 @@ package jogoInterface;
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import jogoCodigo.*;
 
 public class JanelaPrincipal extends JFrame {
@@ -14,7 +11,7 @@ public class JanelaPrincipal extends JFrame {
         return "<html><center>" + p1 + "<br>" + p2 + "</center></html>";
     }
     
-    public ThreadDeBatalha tb;
+    public ThreadPasseio tp;
     private Personagem personagem;
     
     public void atualizaLog(String texto){
@@ -95,9 +92,9 @@ public class JanelaPrincipal extends JFrame {
                 a3.getNome(), String.format("%d HP", a3.getDano())));
         else this.btnAtaque3.setText("VAZIO");
         
-        this.tb = new ThreadDeBatalha(p);
-        this.tb.start();
-        this.tb.setListener(new ThreadDeBatalha.BattleActionListener(){
+        this.tp = new ThreadPasseio(p);
+        this.tp.start();
+        this.tp.setListenerBatalha(new ThreadPasseio.BattleActionListener(){
             @Override
             public void terminaBatalha() {
                 atualizaLog("A batalha terminou!");
@@ -137,21 +134,25 @@ public class JanelaPrincipal extends JFrame {
                 if (personagem.getAtaque(1) != null) btnAtaque1.setEnabled(true);
                 if (personagem.getAtaque(2) != null) btnAtaque1.setEnabled(true);
             }
+            
+            @Override
+            public void encontraBau(){
+                atualizaLog("Você encontrou um baú!");
+            }
         });
-        
       
-        this.btnBatalhar.addActionListener(new ActionListener(){
+        this.btnPassear.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                if ("Entrar em batalha".equals(btnBatalhar.getText())){
-                    JanelaPrincipal.this.tb.ativar();
-                    atualizaLog("Você está em campo de batalha!");
-                    btnBatalhar.setText("Sair de batalha");
+                if (btnPassear.getText().equals("Dar um passeio")){
+                    tp.ativa();
+                    atualizaLog("Você está dando uma volta...");
+                    btnPassear.setText("Voltar para casa");
 
                 } else {
-                    JanelaPrincipal.this.tb.desativar();
-                    atualizaLog("Você saiu do campo de batalha.");
-                    btnBatalhar.setText("Entrar em batalha");
+                    tp.desativa();
+                    atualizaLog("Você voltou para casa.");
+                    btnPassear.setText("Dar um passeio");
                 }
             }
         });
@@ -174,7 +175,7 @@ public class JanelaPrincipal extends JFrame {
         this.btnAtaque1.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                tb.defineAtaque(personagem.getAtaque(0));
+                tp.defineAtaque(personagem.getAtaque(0));
                 btnAtaque1.setEnabled(false);
                 btnAtaque2.setEnabled(false);
                 btnAtaque3.setEnabled(false);
@@ -184,7 +185,7 @@ public class JanelaPrincipal extends JFrame {
         this.btnAtaque2.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                tb.defineAtaque(personagem.getAtaque(1));
+                tp.defineAtaque(personagem.getAtaque(1));
                 btnAtaque1.setEnabled(false);
                 btnAtaque2.setEnabled(false);
                 btnAtaque3.setEnabled(false);
@@ -194,7 +195,7 @@ public class JanelaPrincipal extends JFrame {
         this.btnAtaque3.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                tb.defineAtaque(personagem.getAtaque(2));
+                tp.defineAtaque(personagem.getAtaque(2));
                 btnAtaque1.setEnabled(false);
                 btnAtaque2.setEnabled(false);
                 btnAtaque3.setEnabled(false);
@@ -228,7 +229,7 @@ public class JanelaPrincipal extends JFrame {
         btnLimpaLog = new javax.swing.JButton();
         btnAtributos = new javax.swing.JButton();
         btnTreinar = new javax.swing.JButton();
-        btnBatalhar = new javax.swing.JButton();
+        btnPassear = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         btnAtaque1 = new javax.swing.JButton();
         btnAtaque3 = new javax.swing.JButton();
@@ -290,7 +291,7 @@ public class JanelaPrincipal extends JFrame {
 
         btnTreinar.setText("Iniciar treinamento");
 
-        btnBatalhar.setText("Entrar em batalha");
+        btnPassear.setText("Dar um passeio");
 
         btnAtaque1.setText("[ATAQUE 1]");
 
@@ -417,7 +418,7 @@ public class JanelaPrincipal extends JFrame {
                         .addGap(38, 38, 38)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnLimpaLog, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnBatalhar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnPassear, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnTreinar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnAtributos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnUsarItem, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -463,7 +464,7 @@ public class JanelaPrincipal extends JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnTreinar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnBatalhar)
+                                .addComponent(btnPassear)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnAtributos)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -488,8 +489,8 @@ public class JanelaPrincipal extends JFrame {
     private javax.swing.JButton btnAtaque2;
     private javax.swing.JButton btnAtaque3;
     private javax.swing.JButton btnAtributos;
-    private javax.swing.JButton btnBatalhar;
     private javax.swing.JButton btnLimpaLog;
+    private javax.swing.JButton btnPassear;
     private javax.swing.JButton btnTreinar;
     private javax.swing.JButton btnUsarItem;
     private javax.swing.JLabel fxLabel1;

@@ -106,7 +106,7 @@
                       <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="btnLimpaLog" alignment="0" max="32767" attributes="0"/>
-                          <Component id="btnBatalhar" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btnPassear" alignment="1" max="32767" attributes="0"/>
                           <Component id="btnTreinar" alignment="1" max="32767" attributes="0"/>
                           <Component id="btnAtributos" alignment="1" max="32767" attributes="0"/>
                           <Component id="btnUsarItem" alignment="1" max="32767" attributes="0"/>
@@ -164,7 +164,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="btnTreinar" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnBatalhar" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnPassear" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnAtributos" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -271,9 +271,9 @@
         <Property name="text" type="java.lang.String" value="Iniciar treinamento"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="btnBatalhar">
+    <Component class="javax.swing.JButton" name="btnPassear">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Entrar em batalha"/>
+        <Property name="text" type="java.lang.String" value="Dar um passeio"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">

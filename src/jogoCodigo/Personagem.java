@@ -1,14 +1,10 @@
 package jogoCodigo;
 
-public abstract class Personagem {
+public abstract class Personagem extends Atributos {
     protected AtributosListener listener;
     private Ataque[] ataques;
     private String apelido;
-    protected int hp;
-    protected int forca;
     protected int fome;
-    protected int inteligencia;
-    protected int maxHP;
     protected int nivel;
     protected int xp;
 
@@ -122,24 +118,8 @@ public abstract class Personagem {
         return apelido;
     }
 
-    public int getHp(){
-        return hp;
-    }
-
-    public int getMaxHP(){
-        return maxHP;
-    }
-
     public int getFome(){
         return fome;
-    }
-    
-    public int getForca(){
-        return forca;
-    }
-
-    public int getInteligencia(){
-        return inteligencia;
     }
     
     public Ataque getAtaque(int pos){
