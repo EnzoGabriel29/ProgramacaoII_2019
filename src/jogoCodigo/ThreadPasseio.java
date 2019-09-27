@@ -50,9 +50,9 @@ public class ThreadPasseio extends Thread {
         while (true){
             System.out.print("");
             if (isPasseio){
-                int tempoEspera = retornaAleatorio(1, 15);
-                System.out.println(tempoEspera);
-                aguarda(tempoEspera);
+                //int tempoEspera = retornaAleatorio(1, 15);
+                //System.out.println(tempoEspera);
+                //aguarda(tempoEspera);
 
                 int acao = retornaAleatorio(1, 2);
                 System.out.println(acao);
@@ -63,6 +63,7 @@ public class ThreadPasseio extends Thread {
                             case 1: { // encontra Item
                                 System.out.println("item");
                                 listenerBatalha.encontraBau();
+                                break;
                             }
                             
                             case 2: { // encontra Comida
@@ -75,11 +76,13 @@ public class ThreadPasseio extends Thread {
                                 
                                 int indexComida = retornaAleatorio(0, comidas.length-1);
                                 listenerBatalha.encontraBau(comidas[indexComida]);
+                                break;
                             }
                             
                             case 3: { // encontra Pocao
                                 System.out.println("pocao");
                                 listenerBatalha.encontraBau();
+                                break;
                             }
                         }
                         

@@ -13,17 +13,30 @@ public class Mochila {
         this.ataques = new ArrayList<>();
     }
     
+    public ArrayList<Comida> retornaComidas(){
+        return new ArrayList<>(this.comidas);
+    }
+    
     public ArrayList<Ataque> retornaAtaques(){
-        return new ArrayList<>(ataques);
+        return new ArrayList<>(this.ataques);
+    }
+    
+    public Comida retornaComida(int pos){
+        return this.comidas.get(pos);
     }
     
     public void adicionaAtaque(Ataque a){
         this.ataques.add(a);
-        this.personagem.listener.adicionaTabela(a, ataques.size()-1);
+        this.personagem.listener.atualizaAtaques();
     }
     
     public void adicionaComida(Comida c){
         this.comidas.add(c);
-        this.personagem.listener.adicionaTabela(c, comidas.size()-1);
+        this.personagem.listener.atualizaComidas();
+    }
+    
+    public void removeComida(int pos){
+        this.comidas.remove(pos);
+        this.personagem.listener.atualizaComidas();
     }
 }

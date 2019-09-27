@@ -21,10 +21,6 @@ public class JanelaPrincipal extends JFrame {
         tAreaLog.setText(texto + "\n" + tAreaLog.getText());
     }
     
-    public void defineBatalha(){
-        
-    }
-    
     public JanelaPrincipal(Personagem p) {   
         initComponents();
         this.personagem = p;
@@ -69,23 +65,34 @@ public class JanelaPrincipal extends JFrame {
             }
             
             @Override
-            public void adicionaTabela(Comida c, int pos){
-               DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
-               model.setValueAt(c.getNome(), pos, 1);
+            public void atualizaComidas(){
+                ArrayList<Comida> comidas = personagem.mochila.retornaComidas();
+                DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
+                
+                for (int i = 0; i < comidas.size(); i++)
+                    model.setValueAt("", i, 1);
+                
+                for (int i = 0; i < comidas.size(); i++)
+                    model.setValueAt(comidas.get(i).getNome(), i, 1);
+                
             }
             
             @Override
-            public void adicionaTabela(Ataque a, int pos){
+            public void atualizaAtaques(){
+                ArrayList<Ataque> ataques = personagem.mochila.retornaAtaques();
                 DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
-                model.setValueAt(a.getNome(), pos, 3);
+                
+                for (int i = 0; i < ataques.size(); i++)
+                    model.setValueAt("", i, 3);
+                
+                for (int i = 0; i < ataques.size(); i++)
+                    model.setValueAt(ataques.get(i).getNome(), i, 3);
+                
             }
         });
         
-        ArrayList<Ataque> ataques = this.personagem.mochila.retornaAtaques();
-        for (int i = 0; i < ataques.size(); i++){
-            DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
-            model.setValueAt(ataques.get(i).getNome(), i, 3);
-        }
+        this.personagem.listener.atualizaAtaques();
+        this.personagem.listener.atualizaComidas();
         
         this.labelNome.setText(this.personagem.getApelido());
         this.labelClasse.setText(this.personagem.getClass().getSimpleName());
@@ -192,6 +199,37 @@ public class JanelaPrincipal extends JFrame {
                     tp.desativa();
                     atualizaLog("Você voltou para casa.");
                     btnPassear.setText("Dar um passeio");
+                }
+            }
+        });
+        
+        this.btnUsarItem.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                int lin = tabelaMochila.getSelectedRow();
+                int col = tabelaMochila.getSelectedColumn();
+                
+                switch (col){
+                    case 0: {
+                        break;
+                    }
+                    
+                    case 1: {
+                        atualizaLog("");
+                        Comida c = personagem.mochila.retornaComida(lin);
+                        personagem.mochila.removeComida(lin);
+                        personagem.diminuiFome(c.getFomeRest());
+                        break;
+                    }
+                    
+                    case 2: {
+                        break;
+                    }
+                    
+                    case 3: {
+                        atualizaLog("Ataques não podem ser consumidos!");
+                        break;
+                    }
                 }
             }
         });
