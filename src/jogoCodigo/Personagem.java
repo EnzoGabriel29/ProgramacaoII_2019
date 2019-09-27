@@ -2,13 +2,15 @@ package jogoCodigo;
 
 public abstract class Personagem extends Atributos {
     protected AtributosListener listener;
-    private Ataque[] ataques;
-    private String apelido;
+    public Mochila mochila;
+    protected Ataque[] ataques;
+    protected String apelido;
     protected int fome;
     protected int nivel;
     protected int xp;
 
     public Personagem(String apelido) {
+        this.mochila = new Mochila(this);
         this.apelido = apelido;
         this.hp = 100;
         this.ataques = new Ataque[3];
@@ -25,6 +27,8 @@ public abstract class Personagem extends Atributos {
             @Override public void alteraMaxHP(){}
             @Override public void alteraFome(){}
             @Override public void ataca(Ataque a, Personagem in){}
+            @Override public void adicionaTabela(Ataque a, int pos){}
+            @Override public void adicionaTabela(Comida c, int pos){}
         };
         
         new Thread(new Runnable(){
@@ -138,6 +142,10 @@ public abstract class Personagem extends Atributos {
         public void alteraNivel();
         public void alteraFome();
         public void ataca(Ataque a, Personagem in);
+//      public void adicionaTabela(Item i, int pos);
+        public void adicionaTabela(Comida c, int pos);
+//      public void adicionaTabela(Pocao p, int pos);
+        public void adicionaTabela(Ataque a, int pos);
     }
     
 }

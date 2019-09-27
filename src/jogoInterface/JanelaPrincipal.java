@@ -3,6 +3,9 @@ package jogoInterface;
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import jogoCodigo.*;
 
 public class JanelaPrincipal extends JFrame {
@@ -29,8 +32,8 @@ public class JanelaPrincipal extends JFrame {
         this.personagem.setListener(new Personagem.AtributosListener(){
             @Override
             public void alteraHP(){
-                labelHP.setText(String.format("%d", personagem.getHp()));
-                int novoHP = (int) (((float) personagem.getHp()/
+                labelHP.setText(String.format("%d", personagem.getHP()));
+                int novoHP = (int) (((float) personagem.getHP()/
                         personagem.getMaxHP())*100);
                 barraHP.setValue(novoHP);
             }
@@ -64,7 +67,25 @@ public class JanelaPrincipal extends JFrame {
                         + a.getNome() + " e causou um dano de " + a.getDano() +
                         " HP em " + in.getApelido() + "!");
             }
+            
+            @Override
+            public void adicionaTabela(Comida c, int pos){
+               DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
+               model.setValueAt(c.getNome(), pos, 1);
+            }
+            
+            @Override
+            public void adicionaTabela(Ataque a, int pos){
+                DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
+                model.setValueAt(a.getNome(), pos, 3);
+            }
         });
+        
+        ArrayList<Ataque> ataques = this.personagem.mochila.retornaAtaques();
+        for (int i = 0; i < ataques.size(); i++){
+            DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
+            model.setValueAt(ataques.get(i).getNome(), i, 3);
+        }
         
         this.labelNome.setText(this.personagem.getApelido());
         this.labelClasse.setText(this.personagem.getClass().getSimpleName());
@@ -105,14 +126,14 @@ public class JanelaPrincipal extends JFrame {
 
             @Override
             public void terminaRodada(Personagem pe, Personagem in) {
-                atualizaLog(pe.getApelido() + " tem " + pe.getHp() +
+                atualizaLog(pe.getApelido() + " tem " + pe.getHP() +
                         " de HP e o inimigo " + in.getApelido() +
-                        " tem " + in.getHp() + " de HP.");
+                        " tem " + in.getHP() + " de HP.");
             }
 
             @Override
             public void inimigoEncontrado(Personagem in){
-                atualizaLog("HP: " + in.getHp());
+                atualizaLog("HP: " + in.getHP());
                 atualizaLog("NOME: " + in.getApelido());
                 atualizaLog("Um inimigo foi localizado! Prepare-se!");
             }
@@ -137,7 +158,25 @@ public class JanelaPrincipal extends JFrame {
             
             @Override
             public void encontraBau(){
-                atualizaLog("Você encontrou um baú!");
+                int n = JOptionPane.showConfirmDialog(null,
+                    "Você gostaria de adicionar esse item à mochila?",
+                    "Você encontrou um baú!",
+                    JOptionPane.YES_NO_OPTION);
+                
+                if (n == JOptionPane.YES_OPTION) System.out.println("adicionado!");
+                else System.out.println("nao adicionado :(");
+                
+            }
+            
+            @Override
+            public void encontraBau(Comida c){
+                int n = JOptionPane.showConfirmDialog(null, "Você gostaria " +
+                        "de adicionar " + c.getNome() + ", que restaura " +
+                        c.getFomeRest() + " pontos de fome, ao seu inventário?",
+                        "Você encontrou um baú!", JOptionPane.YES_NO_OPTION);
+                
+                if (n == JOptionPane.YES_OPTION)
+                    personagem.mochila.adicionaComida(c);
             }
         });
       
@@ -235,7 +274,7 @@ public class JanelaPrincipal extends JFrame {
         btnAtaque3 = new javax.swing.JButton();
         btnAtaque2 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tabelaMochila = new javax.swing.JTable();
         fxLabel6 = new javax.swing.JLabel();
         barraFome = new javax.swing.JProgressBar();
         labelFome = new javax.swing.JLabel();
@@ -306,7 +345,7 @@ public class JanelaPrincipal extends JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(btnAtaque1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAtaque2, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                .addComponent(btnAtaque2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAtaque3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -317,7 +356,7 @@ public class JanelaPrincipal extends JFrame {
             .addComponent(btnAtaque3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaMochila.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -364,12 +403,12 @@ public class JanelaPrincipal extends JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane4.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setResizable(false);
-            jTable2.getColumnModel().getColumn(1).setResizable(false);
-            jTable2.getColumnModel().getColumn(2).setResizable(false);
-            jTable2.getColumnModel().getColumn(3).setResizable(false);
+        jScrollPane4.setViewportView(tabelaMochila);
+        if (tabelaMochila.getColumnModel().getColumnCount() > 0) {
+            tabelaMochila.getColumnModel().getColumn(0).setResizable(false);
+            tabelaMochila.getColumnModel().getColumn(1).setResizable(false);
+            tabelaMochila.getColumnModel().getColumn(2).setResizable(false);
+            tabelaMochila.getColumnModel().getColumn(3).setResizable(false);
         }
 
         fxLabel6.setText("FOME:");
@@ -506,7 +545,6 @@ public class JanelaPrincipal extends JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JLabel labelClasse;
     private javax.swing.JLabel labelFome;
@@ -515,5 +553,6 @@ public class JanelaPrincipal extends JFrame {
     private javax.swing.JLabel labelNome;
     private javax.swing.JLabel labelXP;
     private javax.swing.JTextArea tAreaLog;
+    private javax.swing.JTable tabelaMochila;
     // End of variables declaration//GEN-END:variables
 }

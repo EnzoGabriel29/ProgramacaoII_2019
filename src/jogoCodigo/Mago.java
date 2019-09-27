@@ -5,7 +5,9 @@ public class Mago extends Personagem {
     public Mago(String apelido) {
         super(apelido);
         this.inteligencia = 20;
-        this.defineAtaque(new Ataque("Congelar", 30), 0);
+        Ataque congelar = new Ataque("Congelar", 30);
+        this.mochila.adicionaAtaque(congelar);
+        this.defineAtaque(congelar, 0);
     }
 
     @Override

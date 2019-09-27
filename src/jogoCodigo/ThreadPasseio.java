@@ -50,7 +50,7 @@ public class ThreadPasseio extends Thread {
         while (true){
             System.out.print("");
             if (isPasseio){
-                int tempoEspera = retornaAleatorio(0, 15);
+                int tempoEspera = retornaAleatorio(1, 15);
                 System.out.println(tempoEspera);
                 aguarda(tempoEspera);
 
@@ -58,7 +58,31 @@ public class ThreadPasseio extends Thread {
                 System.out.println(acao);
                 switch (acao){
                     case 1: { // encontra Baú
-                        listenerBatalha.encontraBau();
+                        int objeto = retornaAleatorio(1, 3);
+                        switch (objeto){
+                            case 1: { // encontra Item
+                                System.out.println("item");
+                                listenerBatalha.encontraBau();
+                            }
+                            
+                            case 2: { // encontra Comida
+                                Comida[] comidas = {
+                                    new Comida("Frango", 30),
+                                    new Comida("Maçã", 5),
+                                    new Comida("Cenoura", 10),
+                                    new Comida("Ensopado", 20),
+                                    new Comida("Presunto", 40)};
+                                
+                                int indexComida = retornaAleatorio(0, comidas.length-1);
+                                listenerBatalha.encontraBau(comidas[indexComida]);
+                            }
+                            
+                            case 3: { // encontra Pocao
+                                System.out.println("pocao");
+                                listenerBatalha.encontraBau();
+                            }
+                        }
+                        
                         break;
                     }
 
@@ -80,7 +104,7 @@ public class ThreadPasseio extends Thread {
         
         if (!isPasseio) return false;
 
-        while (in.getHp() > 0 && personagem.getHp() > 0){
+        while (in.getHP() > 0 && personagem.getHP() > 0){
             in.ataque(personagem, new Ataque("Padrão", 20));
                     
             listenerBatalha.aguardaAtaque();
@@ -98,7 +122,7 @@ public class ThreadPasseio extends Thread {
                 
         if (!isPasseio) return false;
                 
-        if (personagem.getHp() > 0) this.personagem.treinar();
+        if (personagem.getHP() > 0) this.personagem.treinar();
         personagem.restauraHP();
         return true;
     }
@@ -114,5 +138,6 @@ public class ThreadPasseio extends Thread {
         public void jogadorFugiu();
         public void aguardaAtaque();
         public void encontraBau();
+        public void encontraBau(Comida c);
     }
 }
