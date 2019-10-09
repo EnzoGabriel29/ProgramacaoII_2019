@@ -1,5 +1,7 @@
 package jogoInterface;
 
+import jogoCodigo.personagem.Personagem;
+import jogoCodigo.item.Comida;
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,7 +71,7 @@ public class JanelaPrincipal extends JFrame {
                 ArrayList<Comida> comidas = personagem.mochila.retornaComidas();
                 DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
                 
-                for (int i = 0; i < comidas.size(); i++)
+                for (int i = 0; i <= comidas.size(); i++)
                     model.setValueAt("", i, 1);
                 
                 for (int i = 0; i < comidas.size(); i++)
@@ -82,7 +84,7 @@ public class JanelaPrincipal extends JFrame {
                 ArrayList<Ataque> ataques = personagem.mochila.retornaAtaques();
                 DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
                 
-                for (int i = 0; i < ataques.size(); i++)
+                for (int i = 0; i <= ataques.size(); i++)
                     model.setValueAt("", i, 3);
                 
                 for (int i = 0; i < ataques.size(); i++)
@@ -171,8 +173,7 @@ public class JanelaPrincipal extends JFrame {
                     JOptionPane.YES_NO_OPTION);
                 
                 if (n == JOptionPane.YES_OPTION) System.out.println("adicionado!");
-                else System.out.println("nao adicionado :(");
-                
+                else System.out.println("nao adicionado :(");   
             }
             
             @Override
@@ -217,8 +218,9 @@ public class JanelaPrincipal extends JFrame {
                     case 1: {
                         atualizaLog("");
                         Comida c = personagem.mochila.retornaComida(lin);
+                        c.utilizarItem(personagem);
                         personagem.mochila.removeComida(lin);
-                        personagem.diminuiFome(c.getFomeRest());
+                        
                         break;
                     }
                     

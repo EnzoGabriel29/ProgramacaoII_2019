@@ -1,5 +1,7 @@
 package jogoCodigo;
 
+import jogoCodigo.personagem.Personagem;
+import jogoCodigo.item.Comida;
 import java.util.ArrayList;
 
 public class Mochila {

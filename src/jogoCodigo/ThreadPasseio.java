@@ -1,6 +1,10 @@
 package jogoCodigo;
 
+import jogoCodigo.personagem.Inimigo;
+import jogoCodigo.personagem.Personagem;
+import jogoCodigo.item.Comida;
 import java.util.concurrent.ThreadLocalRandom;
+import jogoCodigo.item.Pocao;
 
 public class ThreadPasseio extends Thread {
     private Personagem personagem;
@@ -62,7 +66,6 @@ public class ThreadPasseio extends Thread {
                         switch (objeto){
                             case 1: { // encontra Item
                                 System.out.println("item");
-                                listenerBatalha.encontraBau();
                                 break;
                             }
                             
@@ -72,16 +75,25 @@ public class ThreadPasseio extends Thread {
                                     new Comida("Maçã", 5),
                                     new Comida("Cenoura", 10),
                                     new Comida("Ensopado", 20),
-                                    new Comida("Presunto", 40)};
+                                    new Comida("Presunto", 40)
+                                };
                                 
                                 int indexComida = retornaAleatorio(0, comidas.length-1);
-                                listenerBatalha.encontraBau(comidas[indexComida]);
+                                personagem.mochila.adicionaComida(comidas[indexComida]);
                                 break;
                             }
                             
                             case 3: { // encontra Pocao
-                                System.out.println("pocao");
-                                listenerBatalha.encontraBau();
+                                Pocao[] pocoes = {
+                                    new Pocao(30, true),
+                                    new Pocao("Maçã", 5),
+                                    new Pocao("Cenoura", 10),
+                                    new Comida("Ensopado", 20),
+                                    new Comida("Presunto", 40)
+                                };
+                                
+                                int indexComida = retornaAleatorio(0, comidas.length-1);
+                                personagem.mochila.adicionaComida(comidas[indexComida]);
                                 break;
                             }
                         }
@@ -103,24 +115,28 @@ public class ThreadPasseio extends Thread {
     
     public boolean iniciaBatalha(Inimigo in){
         listenerBatalha.inimigoEncontrado(in);
-        aguarda(3);
+        
+        listenerBatalha.aguardaAtaque();
+        aguardandoAtaque = true;
+        
+        while (aguardandoAtaque){
+            try { Thread.sleep(1000);
+            } catch (InterruptedException ex){}
+            
+            if (!isPasseio) return false;
+        }
+        aguarda(1);
         
         if (!isPasseio) return false;
-
+        
         while (in.getHP() > 0 && personagem.getHP() > 0){
+            System.out.print("");
             in.ataque(personagem, new Ataque("Padrão", 20));
-                    
-            listenerBatalha.aguardaAtaque();
-            aguardandoAtaque = true;
-            while (aguardandoAtaque){
-                System.out.print("");
-                if (!isPasseio) return false;
-            }
-            
             personagem.ataque(in, ataqueAtual);
             listenerBatalha.terminaRodada(personagem, in);
-                    
+           
             aguarda(1);
+            if (!isPasseio) return false;
         }
                 
         if (!isPasseio) return false;

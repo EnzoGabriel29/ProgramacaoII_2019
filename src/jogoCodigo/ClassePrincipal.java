@@ -1,5 +1,7 @@
 package jogoCodigo;
 
+import jogoCodigo.personagem.Mago;
+import jogoCodigo.personagem.Personagem;
 import jogoInterface.JanelaPrincipal;
 
 public class ClassePrincipal {
