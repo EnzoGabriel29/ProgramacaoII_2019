@@ -11,11 +11,15 @@ public class Mago extends Personagem {
     }
 
     @Override
-    public void treinar() {
+    public void evolui() {
         inteligencia += nivel*3;
-        this.aumentaXP(nivel*10);
         forca++;
         this.maxHP += nivel*19;
+        
+        if (this.maxHP > this.nivel*100)
+            this.maxHP = this.nivel*100;
+        
+        this.aumentaXP(nivel*10);
     }
 
     @Override

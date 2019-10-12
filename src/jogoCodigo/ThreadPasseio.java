@@ -1,9 +1,16 @@
 package jogoCodigo;
 
 import java.util.concurrent.ThreadLocalRandom;
+import jogoCodigo.Calculo.RandomCollection;
 
 public class ThreadPasseio extends Thread {
-    private Personagem personagem;
+    private static final int ACAO_BAU = 0;
+    private static final int ACAO_INIMIGO = 1;
+    private static final int ITEM_POCAO = 2;
+    private static final int ITEM_COMIDA = 3;
+    private static final int ITEM = 4;
+    
+    private final Personagem personagem;
     private BattleActionListener listenerBatalha;
     private boolean isPasseio = false;
     private boolean aguardandoAtaque = false;
@@ -11,10 +18,6 @@ public class ThreadPasseio extends Thread {
     
     public ThreadPasseio(Personagem p){
         this.personagem = p;
-    }
-    
-    public static int retornaAleatorio(int min, int max){
-        return ThreadLocalRandom.current().nextInt(min, max+1);
     }
     
     public static void aguarda(int valor){
@@ -28,16 +31,6 @@ public class ThreadPasseio extends Thread {
     
     public void desativa(){
         this.isPasseio = false;
-    }
-    
-    public Inimigo retornaInimigo(){
-        String[] inimigos = {"Dragão", "Trasgo", "Ogro", "Gigante", "Bruxa"};
-
-        int indexRandom = retornaAleatorio(0, inimigos.length-1);
-        int nivelRandom = retornaAleatorio(this.personagem.getNivel()
-                -1, this.personagem.getNivel()+1);
-        
-        return new Inimigo(inimigos[indexRandom], nivelRandom);
     }
     
     public void defineAtaque(Ataque a){
@@ -54,34 +47,32 @@ public class ThreadPasseio extends Thread {
                 //System.out.println(tempoEspera);
                 //aguarda(tempoEspera);
 
-                int acao = retornaAleatorio(1, 2);
-                System.out.println(acao);
+                RandomCollection<Integer> rca = new RandomCollection<>();
+                rca.add(75, ACAO_BAU).add(25, ACAO_INIMIGO);
+                int acao = rca.next();
+                
                 switch (acao){
-                    case 1: { // encontra Baú
-                        int objeto = retornaAleatorio(1, 3);
+                    case ACAO_BAU: {
+                        RandomCollection<Integer> rci = new RandomCollection<>();
+                        rci.add(10, ITEM_COMIDA).add(7, ITEM_POCAO).add(3, ITEM);                        
+                        int objeto = rci.next();
+                        
                         switch (objeto){
-                            case 1: { // encontra Item
+                            case ITEM: { // encontra Item
                                 System.out.println("item");
                                 listenerBatalha.encontraBau();
                                 break;
                             }
                             
-                            case 2: { // encontra Comida
-                                Comida[] comidas = {
-                                    new Comida("Frango", 30),
-                                    new Comida("Maçã", 5),
-                                    new Comida("Cenoura", 10),
-                                    new Comida("Ensopado", 20),
-                                    new Comida("Presunto", 40)};
-                                
-                                int indexComida = retornaAleatorio(0, comidas.length-1);
-                                listenerBatalha.encontraBau(comidas[indexComida]);
+                            case ITEM_COMIDA: { // encontra Comida                                
+                                Comida c = Comida.retornaComida();
+                                listenerBatalha.encontraBau(c);
                                 break;
                             }
                             
-                            case 3: { // encontra Pocao
-                                System.out.println("pocao");
-                                listenerBatalha.encontraBau();
+                            case ITEM_POCAO: { // encontra Pocao
+                                Pocao p = Pocao.retornaPocao();
+                                listenerBatalha.encontraBau(p);
                                 break;
                             }
                         }
@@ -89,9 +80,10 @@ public class ThreadPasseio extends Thread {
                         break;
                     }
 
-                    case 2: { // encontra Inimigo
-                        Inimigo in = retornaInimigo();
+                    case ACAO_INIMIGO: { 
+                        Inimigo in = Inimigo.retornaInimigo(personagem);
                         boolean batalhaConcluida = this.iniciaBatalha(in);
+                        
                         if (batalhaConcluida) listenerBatalha.terminaBatalha();
                         else listenerBatalha.jogadorFugiu();
                         isPasseio = batalhaConcluida;
@@ -103,19 +95,20 @@ public class ThreadPasseio extends Thread {
     
     public boolean iniciaBatalha(Inimigo in){
         listenerBatalha.inimigoEncontrado(in);
+        listenerBatalha.aguardaAtaque();
+        aguardandoAtaque = true;
+
+        while (aguardandoAtaque){
+            aguarda(0);
+            if (!isPasseio) return false;
+        }
+        
         aguarda(3);
         
         if (!isPasseio) return false;
 
         while (in.getHP() > 0 && personagem.getHP() > 0){
             in.ataque(personagem, new Ataque("Padrão", 20));
-                    
-            listenerBatalha.aguardaAtaque();
-            aguardandoAtaque = true;
-            while (aguardandoAtaque){
-                System.out.print("");
-                if (!isPasseio) return false;
-            }
             
             personagem.ataque(in, ataqueAtual);
             listenerBatalha.terminaRodada(personagem, in);
@@ -125,8 +118,9 @@ public class ThreadPasseio extends Thread {
                 
         if (!isPasseio) return false;
                 
-        if (personagem.getHP() > 0) this.personagem.treinar();
-        personagem.restauraHP();
+        if (personagem.getHP() > 0)
+            this.personagem.evolui();
+        
         return true;
     }
     
@@ -142,5 +136,6 @@ public class ThreadPasseio extends Thread {
         public void aguardaAtaque();
         public void encontraBau();
         public void encontraBau(Comida c);
+        public void encontraBau(Pocao p);
     }
 }
