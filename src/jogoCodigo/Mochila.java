@@ -1,30 +1,60 @@
 package jogoCodigo;
 
-import jogoCodigo.personagem.Personagem;
-import jogoCodigo.item.Comida;
+import java.util.List;
 import java.util.ArrayList;
 
 public class Mochila {
-    private Personagem personagem;
-    private ArrayList<Ataque> ataques;
-    private ArrayList<Comida> comidas;
+    private int carteira;
+    private final Personagem personagem;
+    private final List<Pocao> pocoes;
+    private final List<Ataque> ataques;
+    private final List<Comida> comidas;
     
     public Mochila(Personagem p){
         this.personagem = p;
+        this.pocoes = new ArrayList<>();
         this.comidas = new ArrayList<>();
         this.ataques = new ArrayList<>();
+        this.carteira = 0;
     }
     
-    public ArrayList<Comida> retornaComidas(){
+    public List<Pocao> retornaPocoes(){
+        return new ArrayList<>(this.pocoes);
+    }
+    
+    public List<Comida> retornaComidas(){
         return new ArrayList<>(this.comidas);
     }
     
-    public ArrayList<Ataque> retornaAtaques(){
+    public List<Ataque> retornaAtaques(){
         return new ArrayList<>(this.ataques);
     }
     
+    public Pocao retornaPocao(int pos){
+        try {
+            return this.pocoes.get(pos);
+        
+        } catch (IndexOutOfBoundsException e){
+            return null;
+        }
+    }
+    
     public Comida retornaComida(int pos){
-        return this.comidas.get(pos);
+        try {
+            return this.comidas.get(pos);
+        
+        } catch (IndexOutOfBoundsException e){
+            return null;
+        }
+    }
+    
+    public Ataque retornaAtaque(int pos){
+        try {
+            return this.ataques.get(pos);
+        
+        } catch (IndexOutOfBoundsException e){
+            return null;
+        }
     }
     
     public void adicionaAtaque(Ataque a){
@@ -40,5 +70,23 @@ public class Mochila {
     public void removeComida(int pos){
         this.comidas.remove(pos);
         this.personagem.listener.atualizaComidas();
+    }
+    
+    public void adicionaPocao(Pocao p){
+        this.pocoes.add(p);
+        this.personagem.listener.atualizaPocoes();
+    }
+    
+    public void removePocao(int pos){
+        this.pocoes.remove(pos);
+        this.personagem.listener.atualizaPocoes();
+    }
+    
+    public void adicionaMoedas(int valor){
+        this.carteira += valor;
+    }
+    
+    public int retornaCarteira(){
+        return this.carteira;
     }
 }

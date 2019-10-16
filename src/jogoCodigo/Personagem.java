@@ -3,7 +3,7 @@ package jogoCodigo;
 public abstract class Personagem extends Atributos {
     public AtributosListener listener;
     public Mochila mochila;
-    protected Ataque[] ataques;
+    protected Ataque ataqueAtual;
     protected String apelido;
     protected int fome;
     protected int nivel;
@@ -13,11 +13,10 @@ public abstract class Personagem extends Atributos {
         this.mochila = new Mochila(this);
         this.apelido = apelido;
         this.hp = 100;
-        this.ataques = new Ataque[3];
         this.xp = 0;
         this.maxHP = 100;
         this.forca = 10;
-        this.nivel = 1;
+        this.nivel = 0;
         this.fome = 0;
 
         this.listener = new AtributosListener(){
@@ -29,8 +28,11 @@ public abstract class Personagem extends Atributos {
             @Override public void ataca(Ataque a, Personagem in){}
             @Override public void atualizaComidas(){}
             @Override public void atualizaAtaques(){}
+            @Override public void atualizaPocoes(){}
+            @Override public void atualizaAtributos(){}
         };
         
+        // Thread que monitora a fome do personagem.
         new Thread(new Runnable(){
             @Override
             public void run(){
@@ -41,35 +43,49 @@ public abstract class Personagem extends Atributos {
                     aumentaFome(5);
                 }
             }
-        }).start();   
+        }).start();
     }
     
     public Personagem() {
-        this("fulano");
+        this("Fulano");
     }
     
-    public abstract void treinar();
+    public abstract void evolui();
     public abstract void ataque(Personagem p, Ataque a);
     
-    public void defineAtaque(Ataque a, int pos){
-        this.ataques[pos] = a;
+    public void defineAtaque(Ataque a){
+        this.ataqueAtual = a;
     }
     
     public void setListener(AtributosListener l){
         this.listener = l;
     }
     
+    public void atualizaAtributos(Atributos a){
+        if (a.getHP() < 0) this.diminuiHP(a.getHP());
+        else this.aumentaHP(a.getHP());
+
+        this.defineMaxHP(this.maxHP + a.getMaxHP());
+        
+        this.forca += a.getForca();
+        this.inteligencia += a.getInteligencia();
+        
+        this.listener.atualizaAtributos();
+    }
+    
+    public abstract void atualizaNivel();
+    
+    // Aumenta o XP e o nível, caso o XP ultrapasse 100.
     public void aumentaXP(int valor){
         this.xp += valor;
-        if (this.xp >= 100){
-            this.nivel += this.xp / 100;
-            this.xp %= 100;
-            listener.alteraNivel();
-        }
+        if (this.xp >= 100)
+            this.atualizaNivel();
+        
         
         listener.alteraXP();
     }
 
+    // Diminui o XP do personagem, não ultrapassando 0.
     public void diminuiXP(int valor){
         this.xp -= valor;
         if (this.xp < 0)
@@ -78,6 +94,7 @@ public abstract class Personagem extends Atributos {
         listener.alteraXP();
     }
     
+    // Aumenta o HP do personagem, não ultrapassando o HP máximo.
     public void aumentaHP(int valor){
         this.hp += valor;
         if (this.hp > this.maxHP)
@@ -86,6 +103,7 @@ public abstract class Personagem extends Atributos {
         listener.alteraHP();
     }
     
+    // Diminui o HP do personagem, não ultrapassando 0.
     public void diminuiHP(int valor){
         this.hp -= valor;
         if (this.hp < 0)
@@ -94,47 +112,43 @@ public abstract class Personagem extends Atributos {
         listener.alteraHP();
     }
     
+    // Aumenta a fome do personagem, não ultrapassando 100.
     public void aumentaFome(int valor){
         this.fome += valor;
         if (this.fome > 100) this.fome = 100;
         listener.alteraFome();
     }
     
+    // Diminui a fome do personagem, não ultrapassando 0.
     public void diminuiFome(int valor){
         this.fome -= valor;
         if (this.fome < 0) this.fome = 0;
         listener.alteraFome();
     }
     
+    // Restaura o HP do personagem.
     public void restauraHP(){
-        aumentaHP(this.maxHP - this.hp);
-    }
-        
-    public int getXp(){
-        return xp;
+        this.aumentaHP(this.maxHP - this.hp);
     }
     
-    public int getNivel(){
-        return nivel;
-    }
-    
-    public String getApelido(){
-        return apelido;
-    }
-
-    public int getFome(){
-        return fome;
-    }
-    
-    public Ataque getAtaque(int pos){
-        return ataques[pos];
-    }
-
+    // Altera o HP máximo do personagem.
     public void defineMaxHP(int valor){
         this.maxHP = valor;
+        if (this.maxHP > (this.nivel+1)*100)
+            this.maxHP = (this.nivel+1)*100;
+        
         listener.alteraMaxHP();
     }
     
+    public void come(Comida c){
+        this.diminuiFome(c.getFomeRest());
+    }
+    
+    public void bebe(Pocao p){
+        this.atualizaAtributos(p.retornaAtributos());
+    }
+    
+    // Utilizado para alterar atributos na interface gráfica.
     public static interface AtributosListener {
         public void alteraHP();
         public void alteraXP();
@@ -144,6 +158,17 @@ public abstract class Personagem extends Atributos {
         public void ataca(Ataque a, Personagem in);
         public void atualizaComidas();
         public void atualizaAtaques();
+        public void atualizaPocoes();
+        public void atualizaAtributos();
     }
     
+    @Override public int getHP(){ return this.hp; }
+    @Override public int getForca(){ return this.forca; }
+    @Override public int getMaxHP(){ return this.maxHP; }
+    @Override public int getInteligencia(){ return this.inteligencia; }
+    public int getXp(){ return xp; }
+    public int getNivel(){ return nivel; }
+    public String getApelido(){ return apelido; }
+    public int getFome(){ return fome; }
+    public Ataque getAtaque(){ return ataqueAtual; }
 }
