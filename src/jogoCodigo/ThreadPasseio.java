@@ -1,6 +1,6 @@
 package jogoCodigo;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 import jogoCodigo.Calculo.RandomCollection;
 
 public class ThreadPasseio extends Thread {
@@ -8,12 +8,12 @@ public class ThreadPasseio extends Thread {
     private static final int ACAO_INIMIGO = 1;
     private static final int ITEM_POCAO = 2;
     private static final int ITEM_COMIDA = 3;
-    private static final int ITEM = 4;
+    private static final int ITEM_MOEDA = 4;
+    private static final int ITEM = 5;
     
     private final Personagem personagem;
     private BattleActionListener listenerBatalha;
     private boolean isPasseio = false;
-    private boolean aguardandoAtaque = false;
     private Ataque ataqueAtual;
     
     public ThreadPasseio(Personagem p){
@@ -35,7 +35,6 @@ public class ThreadPasseio extends Thread {
     
     public void defineAtaque(Ataque a){
         this.ataqueAtual = a;
-        this.aguardandoAtaque = false;
     }
         
     @Override
@@ -43,9 +42,9 @@ public class ThreadPasseio extends Thread {
         while (true){
             System.out.print("");
             if (isPasseio){
-                //int tempoEspera = retornaAleatorio(1, 15);
-                //System.out.println(tempoEspera);
-                //aguarda(tempoEspera);
+                Random r1 = new Random();
+                int tempoEspera = r1.nextInt(10);
+                aguarda(tempoEspera);
 
                 RandomCollection<Integer> rca = new RandomCollection<>();
                 rca.add(75, ACAO_BAU).add(25, ACAO_INIMIGO);
@@ -54,26 +53,33 @@ public class ThreadPasseio extends Thread {
                 switch (acao){
                     case ACAO_BAU: {
                         RandomCollection<Integer> rci = new RandomCollection<>();
-                        rci.add(10, ITEM_COMIDA).add(7, ITEM_POCAO).add(3, ITEM);                        
+                        rci.add(10, ITEM_COMIDA).add(5, ITEM_POCAO)
+                                .add(3, ITEM_MOEDA).add(2, ITEM);                        
                         int objeto = rci.next();
                         
                         switch (objeto){
-                            case ITEM: { // encontra Item
+                            case ITEM: {
                                 System.out.println("item");
                                 listenerBatalha.encontraBau();
                                 break;
                             }
                             
-                            case ITEM_COMIDA: { // encontra Comida                                
+                            case ITEM_COMIDA: {                             
                                 Comida c = Comida.retornaComida();
                                 listenerBatalha.encontraBau(c);
                                 break;
                             }
                             
-                            case ITEM_POCAO: { // encontra Pocao
+                            case ITEM_POCAO: {
                                 Pocao p = Pocao.retornaPocao();
                                 listenerBatalha.encontraBau(p);
                                 break;
+                            }
+                            
+                            case ITEM_MOEDA: {
+                                Random r2 = new Random();
+                                int moedas = r2.nextInt(30);
+                                listenerBatalha.encontraBau(moedas);
                             }
                         }
                         
@@ -95,14 +101,7 @@ public class ThreadPasseio extends Thread {
     
     public boolean iniciaBatalha(Inimigo in){
         listenerBatalha.inimigoEncontrado(in);
-        listenerBatalha.aguardaAtaque();
-        aguardandoAtaque = true;
-
-        while (aguardandoAtaque){
-            aguarda(0);
-            if (!isPasseio) return false;
-        }
-        
+        ataqueAtual = personagem.ataque;
         aguarda(3);
         
         if (!isPasseio) return false;
@@ -114,12 +113,12 @@ public class ThreadPasseio extends Thread {
             listenerBatalha.terminaRodada(personagem, in);
                     
             aguarda(1);
+            
+            if (!isPasseio) return false;
         }
                 
-        if (!isPasseio) return false;
-                
         if (personagem.getHP() > 0)
-            this.personagem.evolui();
+            this.personagem.aumentaXP(this.personagem.nivel*10);
         
         return true;
     }
@@ -133,9 +132,9 @@ public class ThreadPasseio extends Thread {
         public void terminaRodada(Personagem p, Personagem in);
         public void inimigoEncontrado(Personagem in);
         public void jogadorFugiu();
-        public void aguardaAtaque();
         public void encontraBau();
         public void encontraBau(Comida c);
         public void encontraBau(Pocao p);
+        public void encontraBau(int moedas);
     }
 }

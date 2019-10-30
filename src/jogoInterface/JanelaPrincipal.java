@@ -4,7 +4,6 @@ import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -30,7 +29,7 @@ public class JanelaPrincipal extends JFrame {
         this.personagem.setListener(new Personagem.AtributosListener(){
             @Override
             public void alteraHP(){
-                labelHP.setText(String.format("%d", personagem.getHP()));
+                labelHP.setText(String.valueOf(personagem.getHP()));
                 int novoHP = (int) (((float) personagem.getHP()/
                         personagem.getMaxHP())*100);
                 barraHP.setValue(novoHP);
@@ -38,13 +37,13 @@ public class JanelaPrincipal extends JFrame {
 
             @Override
             public void alteraXP(){
-                labelXP.setText(String.format("%d", personagem.getXp()));
+                labelXP.setText(String.valueOf(personagem.getXp()));
                 barraXP.setValue(personagem.getXp());
             }
 
             @Override
             public void alteraNivel(){
-                labelNivel.setText(String.format("%d", personagem.getNivel()));
+                labelNivel.setText(String.valueOf(personagem.getNivel()));
                 atualizaLog(personagem.getApelido() + " subiu de nível!");
             }
 
@@ -56,7 +55,7 @@ public class JanelaPrincipal extends JFrame {
             @Override
             public void alteraFome(){
                 barraFome.setValue(personagem.getFome());
-                labelFome.setText(String.format("%d", personagem.getFome()));
+                labelFome.setText(String.valueOf(personagem.getFome()));
             }
             
             @Override
@@ -93,46 +92,33 @@ public class JanelaPrincipal extends JFrame {
             @Override
             public void atualizaAtaques(){
                 List<Ataque> ataques = personagem.mochila.retornaAtaques();
-                DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
-                
-                for (int i = 0; i < ataques.size()+1; i++)
-                    model.setValueAt("", i, 3);
-                
-                for (int i = 0; i < ataques.size(); i++)
-                    model.setValueAt(ataques.get(i).getNome(), i, 3);
+                cbAtaques.removeAllItems();
+                for (Ataque a : ataques)
+                    cbAtaques.addItem(a.getNome());
+            }
+            
+            @Override
+            public void atualizaAtributos(){
+                labelForca.setText(String.valueOf(personagem.getForca()));
+                labelInteligencia.setText(String.valueOf(personagem.getInteligencia()));
+                labelCarteira.setText(String.valueOf(personagem.mochila.getCarteira()));
             }
         });
         
         this.personagem.listener.atualizaAtaques();
         this.personagem.listener.atualizaComidas();
+        this.personagem.listener.atualizaAtributos();
         
         this.labelNome.setText(this.personagem.getApelido());
         this.labelClasse.setText(this.personagem.getClass().getSimpleName());
-        this.labelNivel.setText(String.format("%d", this.personagem.getNivel()));
-        this.labelFome.setText(String.format("%d", this.personagem.getFome()));
+        this.labelNivel.setText(String.valueOf(this.personagem.getNivel()));
+        this.labelFome.setText(String.valueOf(this.personagem.getFome()));
         this.personagem.aumentaHP(0);
         this.personagem.aumentaXP(0);
         this.personagem.aumentaFome(0);
-        this.btnAtaque1.setEnabled(false);
-        this.btnAtaque2.setEnabled(false);
-        this.btnAtaque3.setEnabled(false);
-        
-        Ataque a1 = this.personagem.getAtaque(0);
-        if (a1 != null) this.btnAtaque1.setText(getStringDupla(
-                a1.getNome(), String.format("%d HP", a1.getDano())));
-        else this.btnAtaque1.setText("VAZIO");
-        
-        Ataque a2 = this.personagem.getAtaque(1);
-        if (a2 != null) this.btnAtaque2.setText(getStringDupla(
-                a2.getNome(), String.format("%d HP", a2.getDano())));
-        else this.btnAtaque2.setText("VAZIO");
-        
-        Ataque a3 = this.personagem.getAtaque(2);
-        if (a3 != null) this.btnAtaque3.setText(getStringDupla(
-                a3.getNome(), String.format("%d HP", a3.getDano())));
-        else this.btnAtaque3.setText("VAZIO");
         
         this.tp = new ThreadPasseio(p);
+        this.tp.defineAtaque(personagem.getAtaque(0));
         this.tp.start();
         this.tp.setListenerBatalha(new ThreadPasseio.BattleActionListener(){
             @Override
@@ -159,53 +145,33 @@ public class JanelaPrincipal extends JFrame {
 
             @Override
             public void jogadorFugiu(){
-                btnAtaque1.setEnabled(false);
-                btnAtaque2.setEnabled(false);
-                btnAtaque3.setEnabled(false);
                 atualizaLog("Fugir no meio de uma batalha não é legal!");
                 atualizaLog("Você perdeu 10 pontos de XP.");
                 personagem.diminuiXP(10);
             }
             
             @Override
-            public void aguardaAtaque(){
-                atualizaLog("Escolha um ataque para seu inimigo.");
-                if (personagem.getAtaque(0) != null) btnAtaque1.setEnabled(true);
-                if (personagem.getAtaque(1) != null) btnAtaque1.setEnabled(true);
-                if (personagem.getAtaque(2) != null) btnAtaque1.setEnabled(true);
-            }
-            
-            @Override
             public void encontraBau(){
-                int n = JOptionPane.showConfirmDialog(null,
-                    "Você gostaria de adicionar esse item à mochila?",
-                    "Você encontrou um baú!",
-                    JOptionPane.YES_NO_OPTION);
-                
-                if (n == JOptionPane.YES_OPTION) System.out.println("adicionado!");
-                else System.out.println("nao adicionado :(");
-                
+                System.out.println("adicionado!");
             }
             
             @Override
             public void encontraBau(Comida c){
-                int n = JOptionPane.showConfirmDialog(null, "Você gostaria " +
-                        "de adicionar " + c.getNome() + ", que restaura " +
-                        c.getFomeRest() + " pontos de fome, ao seu inventário?",
-                        "Você encontrou um baú!", JOptionPane.YES_NO_OPTION);
-                
-                if (n == JOptionPane.YES_OPTION)
-                    personagem.mochila.adicionaComida(c);
+                atualizaLog("Você encontrou " + c.getNome() + "!");
+                personagem.mochila.adicionaComida(c);
             }
             
             @Override
             public void encontraBau(Pocao p){
-                int n = JOptionPane.showConfirmDialog(null, "Você gostaria " +
-                        "de adicionar " + p.getNome() + " ao seu inventário?",
-                        "Você encontrou um baú!", JOptionPane.YES_NO_OPTION);
-                
-                if (n == JOptionPane.YES_OPTION)
-                    personagem.mochila.adicionaPocao(p);
+                atualizaLog("Você encontrou " + p.getNome() + "!");
+                personagem.mochila.adicionaPocao(p);
+            }
+            
+            @Override
+            public void encontraBau(int moedas){
+                atualizaLog("Você encontrou " + moedas + " moedas em um baú!");
+                personagem.mochila.adicionaCarteira(moedas);
+                labelCarteira.setText(String.valueOf(personagem.mochila.getCarteira()));
             }
         });
       
@@ -277,48 +243,10 @@ public class JanelaPrincipal extends JFrame {
             }
         });
         
-        this.btnAtributos.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                atualizaLog(String.format("FORÇA: %d\nINTELIGÊNCIA: %d",
-                        personagem.getForca(), personagem.getInteligencia()));
-            }
-        });
-        
         this.btnLimpaLog.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
                 tAreaLog.setText("");
-            }
-        });
-        
-        this.btnAtaque1.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                tp.defineAtaque(personagem.getAtaque(0));
-                btnAtaque1.setEnabled(false);
-                btnAtaque2.setEnabled(false);
-                btnAtaque3.setEnabled(false);
-            }
-        });
-        
-        this.btnAtaque2.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                tp.defineAtaque(personagem.getAtaque(1));
-                btnAtaque1.setEnabled(false);
-                btnAtaque2.setEnabled(false);
-                btnAtaque3.setEnabled(false);
-            }
-        });
-        
-        this.btnAtaque3.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                tp.defineAtaque(personagem.getAtaque(2));
-                btnAtaque1.setEnabled(false);
-                btnAtaque2.setEnabled(false);
-                btnAtaque3.setEnabled(false);
             }
         });
         
@@ -337,14 +265,21 @@ public class JanelaPrincipal extends JFrame {
                                 txtDescricaoItem.setText(c.toString());
                                 break;
                             }
-                            case 2: break; 
-                            case 3: break;
+                            case 2: break;
                         }
                     }
                 
                 } catch (NullPointerException n){
                     txtDescricaoItem.setText("");
                 }
+            }
+        });
+        
+        cbAtaques.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                Ataque a = personagem.getAtaque(cbAtaques.getSelectedIndex());
+                personagem.defineAtaque(a);
+                System.out.println(a.getNome());
             }
         });
     }
@@ -358,10 +293,6 @@ public class JanelaPrincipal extends JFrame {
         jTextPane1 = new javax.swing.JTextPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
-        btnAtaque1 = new javax.swing.JButton();
-        btnAtaque3 = new javax.swing.JButton();
-        btnAtaque2 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         tabelaMochila = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
@@ -391,10 +322,18 @@ public class JanelaPrincipal extends JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tAreaLog = new javax.swing.JTextArea();
         jPanel6 = new javax.swing.JPanel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
         jScrollPane5 = new javax.swing.JScrollPane();
         txtDescricaoItem = new javax.swing.JTextArea();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        cbAtaques = new javax.swing.JComboBox();
+        jLabel5 = new javax.swing.JLabel();
+        labelInteligencia = new javax.swing.JLabel();
+        labelForca = new javax.swing.JLabel();
+        labelCarteira = new javax.swing.JLabel();
 
         jButton2.setText("jButton2");
 
@@ -415,67 +354,43 @@ public class JanelaPrincipal extends JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnAtaque1.setText("[ATAQUE 1]");
-
-        btnAtaque3.setText("[ATAQUE 3]");
-
-        btnAtaque2.setText("[ATAQUE 2]");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(btnAtaque1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAtaque2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAtaque3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnAtaque1, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-            .addComponent(btnAtaque2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnAtaque3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
         tabelaMochila.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Item", "Comida", "Poção", "Ataque"
+                "Item", "Comida", "Poção"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.String.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -491,7 +406,6 @@ public class JanelaPrincipal extends JFrame {
             tabelaMochila.getColumnModel().getColumn(0).setResizable(false);
             tabelaMochila.getColumnModel().getColumn(1).setResizable(false);
             tabelaMochila.getColumnModel().getColumn(2).setResizable(false);
-            tabelaMochila.getColumnModel().getColumn(3).setResizable(false);
         }
 
         fxLabel1.setText("Nome do personagem:");
@@ -612,7 +526,7 @@ public class JanelaPrincipal extends JFrame {
 
         btnLimpaLog.setText("Limpar registro");
 
-        btnAtributos.setText("Ver atributos");
+        btnAtributos.setText("Ir para loja");
 
         btnUsarItem.setText("Utilizar item");
 
@@ -655,34 +569,97 @@ public class JanelaPrincipal extends JFrame {
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 1, Short.MAX_VALUE)
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "Capacete", "Colete", "Calça", "Bota", "Equipamento"
-            }
-        ));
-        jScrollPane6.setViewportView(jTable3);
-
         txtDescricaoItem.setColumns(20);
         txtDescricaoItem.setRows(5);
         txtDescricaoItem.setEnabled(false);
         jScrollPane5.setViewportView(txtDescricaoItem);
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("ESTATÍSTICAS");
+
+        jLabel2.setText("ATAQUE SELECIONADO:");
+
+        jLabel3.setText("FORÇA:");
+
+        jLabel4.setText("INTELIGÊNCIA:");
+
+        jLabel5.setText("CARTEIRA:");
+
+        labelInteligencia.setText("[INTELIGENCIA]");
+
+        labelForca.setText("[FORCA]");
+
+        labelCarteira.setText("[MOEDAS]");
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(cbAtaques, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel5))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(labelCarteira)
+                                    .addComponent(labelForca)
+                                    .addComponent(labelInteligencia))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(cbAtaques, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(labelForca))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(labelInteligencia))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(labelCarteira))
+                .addContainerGap(29, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -697,17 +674,15 @@ public class JanelaPrincipal extends JFrame {
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
-                        .addComponent(jScrollPane6)))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -721,21 +696,19 @@ public class JanelaPrincipal extends JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(16, 16, 16)
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)))
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
+                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         pack();
@@ -744,14 +717,12 @@ public class JanelaPrincipal extends JFrame {
     private javax.swing.JProgressBar barraFome;
     private javax.swing.JProgressBar barraHP;
     private javax.swing.JProgressBar barraXP;
-    private javax.swing.JButton btnAtaque1;
-    private javax.swing.JButton btnAtaque2;
-    private javax.swing.JButton btnAtaque3;
     private javax.swing.JButton btnAtributos;
     private javax.swing.JButton btnLimpaLog;
     private javax.swing.JButton btnPassear;
     private javax.swing.JButton btnTreinar;
     private javax.swing.JButton btnUsarItem;
+    private javax.swing.JComboBox cbAtaques;
     private javax.swing.JLabel fxLabel1;
     private javax.swing.JLabel fxLabel2;
     private javax.swing.JLabel fxLabel3;
@@ -759,24 +730,30 @@ public class JanelaPrincipal extends JFrame {
     private javax.swing.JLabel fxLabel5;
     private javax.swing.JLabel fxLabel6;
     private javax.swing.JButton jButton2;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable3;
     private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JLabel labelCarteira;
     private javax.swing.JLabel labelClasse;
     private javax.swing.JLabel labelFome;
+    private javax.swing.JLabel labelForca;
     private javax.swing.JLabel labelHP;
+    private javax.swing.JLabel labelInteligencia;
     private javax.swing.JLabel labelNivel;
     private javax.swing.JLabel labelNome;
     private javax.swing.JLabel labelXP;

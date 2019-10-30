@@ -2,6 +2,7 @@ package jogoCodigo;
 
 public abstract class Personagem extends Atributos {
     public AtributosListener listener;
+    protected Ataque ataque;
     public Mochila mochila;
     protected Ataque[] ataques;
     protected String apelido;
@@ -30,6 +31,7 @@ public abstract class Personagem extends Atributos {
             @Override public void atualizaComidas(){}
             @Override public void atualizaAtaques(){}
             @Override public void atualizaPocoes(){}
+            @Override public void atualizaAtributos(){}
         };
         
         // Thread que monitora a fome do personagem.
@@ -53,8 +55,8 @@ public abstract class Personagem extends Atributos {
     public abstract void evolui();
     public abstract void ataque(Personagem p, Ataque a);
     
-    public void defineAtaque(Ataque a, int pos){
-        this.ataques[pos] = a;
+    public void defineAtaque(Ataque a){
+        this.ataque = a;
     }
     
     public void setListener(AtributosListener l){
@@ -149,6 +151,7 @@ public abstract class Personagem extends Atributos {
         public void alteraMaxHP();
         public void alteraNivel();
         public void alteraFome();
+        public void atualizaAtributos();
         public void ataca(Ataque a, Personagem in);
         public void atualizaComidas();
         public void atualizaAtaques();

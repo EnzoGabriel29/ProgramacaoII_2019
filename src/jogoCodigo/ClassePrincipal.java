@@ -6,7 +6,7 @@ public class ClassePrincipal {
     
     public static void main(String[] args) {
         Personagem p1;
-        p1 = new Mago("João");        
+        p1 = new Mago("Pedro");        
         
         new JanelaPrincipal(p1).setVisible(true);
     }  

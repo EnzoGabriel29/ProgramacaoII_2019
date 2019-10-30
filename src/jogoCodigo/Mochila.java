@@ -8,12 +8,16 @@ public class Mochila {
     private final List<Pocao> pocoes;
     private final List<Ataque> ataques;
     private final List<Comida> comidas;
+    private int carteira;
     
     public Mochila(Personagem p){
         this.personagem = p;
         this.pocoes = new ArrayList<>();
         this.comidas = new ArrayList<>();
         this.ataques = new ArrayList<>();
+        
+        Ataque atkNulo = new Ataque("NuloSem ataque", 0);
+        this.ataques.add(atkNulo);
     }
     
     public List<Pocao> retornaPocoes(){
@@ -56,6 +60,17 @@ public class Mochila {
         this.personagem.listener.atualizaComidas();
     }
     
+    public void adicionaCarteira(int moedas){
+        this.carteira = moedas;
+        this.personagem.listener.atualizaAtributos();
+    }
+    
+    public boolean removeCarteira(int moedas){
+        if (moedas > this.carteira) return false;
+        this.carteira -= moedas;
+        return true;
+    }
+    
     public void removeComida(int pos){
         this.comidas.remove(pos);
         this.personagem.listener.atualizaComidas();
@@ -69,5 +84,9 @@ public class Mochila {
     public void removePocao(int pos){
         this.pocoes.remove(pos);
         this.personagem.listener.atualizaPocoes();
+    }
+    
+    public int getCarteira(){
+        return this.carteira;
     }
 }
