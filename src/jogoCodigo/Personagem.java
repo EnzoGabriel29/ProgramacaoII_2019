@@ -2,8 +2,9 @@ package jogoCodigo;
 
 public abstract class Personagem extends Atributos {
     public AtributosListener listener;
+    protected Ataque ataque;
     public Mochila mochila;
-    protected Ataque ataqueAtual;
+    protected Ataque[] ataques;
     protected String apelido;
     protected int fome;
     protected int nivel;
@@ -16,7 +17,7 @@ public abstract class Personagem extends Atributos {
         this.xp = 0;
         this.maxHP = 100;
         this.forca = 10;
-        this.nivel = 0;
+        this.nivel = 1;
         this.fome = 0;
 
         this.listener = new AtributosListener(){
@@ -51,10 +52,11 @@ public abstract class Personagem extends Atributos {
     }
     
     public abstract void evolui();
+    public abstract void melhora();
     public abstract void ataque(Personagem p, Ataque a);
     
     public void defineAtaque(Ataque a){
-        this.ataqueAtual = a;
+        this.ataque = a;
     }
     
     public void setListener(AtributosListener l){
@@ -64,23 +66,21 @@ public abstract class Personagem extends Atributos {
     public void atualizaAtributos(Atributos a){
         if (a.getHP() < 0) this.diminuiHP(a.getHP());
         else this.aumentaHP(a.getHP());
-
-        this.defineMaxHP(this.maxHP + a.getMaxHP());
         
         this.forca += a.getForca();
+        this.maxHP += a.getMaxHP();
         this.inteligencia += a.getInteligencia();
-        
-        this.listener.atualizaAtributos();
+        listener.atualizaAtributos();
     }
-    
-    public abstract void atualizaNivel();
     
     // Aumenta o XP e o nível, caso o XP ultrapasse 100.
     public void aumentaXP(int valor){
         this.xp += valor;
-        if (this.xp >= 100)
-            this.atualizaNivel();
-        
+        if (this.xp >= 100){
+            this.xp %= 100;
+            this.evolui();
+            listener.alteraNivel();
+        }
         
         listener.alteraXP();
     }
@@ -133,11 +133,8 @@ public abstract class Personagem extends Atributos {
     
     // Altera o HP máximo do personagem.
     public void defineMaxHP(int valor){
-        this.maxHP = valor;
-        if (this.maxHP > (this.nivel+1)*100)
-            this.maxHP = (this.nivel+1)*100;
-        
-        listener.alteraMaxHP();
+            this.maxHP = valor;
+            listener.alteraMaxHP();
     }
     
     public void come(Comida c){
@@ -155,20 +152,20 @@ public abstract class Personagem extends Atributos {
         public void alteraMaxHP();
         public void alteraNivel();
         public void alteraFome();
+        public void atualizaAtributos();
         public void ataca(Ataque a, Personagem in);
         public void atualizaComidas();
         public void atualizaAtaques();
         public void atualizaPocoes();
-        public void atualizaAtributos();
     }
     
     @Override public int getHP(){ return this.hp; }
     @Override public int getForca(){ return this.forca; }
     @Override public int getMaxHP(){ return this.maxHP; }
     @Override public int getInteligencia(){ return this.inteligencia; }
+    public Ataque getAtaque(){ return ataque; }
     public int getXp(){ return xp; }
     public int getNivel(){ return nivel; }
     public String getApelido(){ return apelido; }
     public int getFome(){ return fome; }
-    public Ataque getAtaque(){ return ataqueAtual; }
 }

@@ -1,62 +1,56 @@
 package jogoCodigo;
 
-
 public class Mago extends Personagem {
-    private static final Ataque ATK01 = new Ataque("Bola de fogo", 10);
-    private static final Ataque ATK02 = new Ataque("Cajado elétrico", 15);
-    private static final Ataque ATK04 = new Ataque("Coluna de fumaça", 20);
-    private static final Ataque ATK08 = new Ataque("Raio explosivo", 30);
-    private boolean[] ataquesAdq = {false, false, false, false};
-
+    public static final Ataque ATK001 = new Ataque("Raio de energia", 20);
+    public static final Ataque ATK002 = new Ataque("Espinhos mágicos", 30);
+    public static final Ataque ATK004 = new Ataque("Rajada de fogo", 40);
+    public static final Ataque ATK008 = new Ataque("Trovão incandescente", 50);
+    public static final Ataque ATK016 = new Ataque("Explosão mística", 60);
+    public static final Ataque ATK032 = new Ataque("Sopro do dragão", 70);
+    
     public Mago(String apelido) {
         super(apelido);
         this.inteligencia = 20;
-        Ataque none = new Ataque("Sem ataque", 0);
-        this.ataqueAtual = none;
-        this.mochila.adicionaAtaque(none);
-    }
-    
-    @Override
-    public void atualizaNivel(){
-        this.nivel += this.xp / 100;
-        this.xp %= 100;
-                
-        if (this.nivel >= 1 && !ataquesAdq[0]){
-            this.mochila.adicionaAtaque(ATK01);
-            ataquesAdq[0] = true;
-            
-        } if (this.nivel >= 2 && !ataquesAdq[1]){
-            this.mochila.adicionaAtaque(ATK02);
-            ataquesAdq[1] = true;
-            
-        } if (this.nivel >= 4 && !ataquesAdq[2]){
-            this.mochila.adicionaAtaque(ATK04);
-            ataquesAdq[2] = true;
-            
-        } if (this.nivel >= 8 && !ataquesAdq[3]){
-            this.mochila.adicionaAtaque(ATK08);
-            ataquesAdq[3] = true;
-        }
-        
-        listener.alteraNivel();
     }
 
     @Override
     public void evolui(){
-        Atributos aux = new Atributos(){
-            @Override public int getHP(){ return 0; }
-            @Override public int getInteligencia(){ return nivel*3; }
-            @Override public int getForca(){ return forca+1; }
-            @Override public int getMaxHP(){ return nivel*19; }
-        };
-        this.atualizaAtributos(aux);
+        this.nivel++;
         
-        this.aumentaXP(nivel*10);
+        this.atualizaAtributos(new Atributos(){
+            @Override public int getHP(){ return 0; }
+            @Override public int getMaxHP(){ return Mago.this.nivel*19; }
+            @Override public int getForca(){ return 10; }
+            @Override public int getInteligencia(){ return Mago.this.nivel*3; }
+        });
+        
+        switch (this.nivel){
+            case 1: this.mochila.adicionaAtaque(ATK001); break;
+            case 2: this.mochila.adicionaAtaque(ATK002); break;
+            case 4: this.mochila.adicionaAtaque(ATK004); break;
+            case 8: this.mochila.adicionaAtaque(ATK008); break;
+            case 16: this.mochila.adicionaAtaque(ATK016); break;
+            case 32: this.mochila.adicionaAtaque(ATK032); break;
+        }
+        
+        if (this.maxHP > this.nivel*100)
+            this.maxHP = this.nivel*100;
+    }
+    
+    @Override
+    public void melhora(){
+        this.atualizaAtributos(new Atributos(){
+            @Override public int getHP(){ return 0; }
+            @Override public int getMaxHP(){ return 0; }
+            @Override public int getForca(){ return this.forca + 1; }
+            @Override public int getInteligencia(){ return this. inteligencia + 1; }
+        });
     }
 
     @Override
-    public void ataque(Personagem p, Ataque a) {
-        p.diminuiHP(this.forca + a.getDano());
+    public void ataque(Personagem p, Ataque a){
+        int danoAtaque = a == null ? 0 : a.getDano();
+        p.diminuiHP(this.forca + danoAtaque);
         listener.ataca(a, p);
     }
     

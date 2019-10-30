@@ -1,7 +1,5 @@
 package jogoCodigo;
 
-import java.util.Random;
-import java.util.ArrayList;
 import jogoCodigo.Calculo.RandomCollection;
 
 public class Comida extends ItemConsumivel {

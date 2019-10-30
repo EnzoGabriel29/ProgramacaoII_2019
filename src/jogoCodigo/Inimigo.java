@@ -1,5 +1,6 @@
 package jogoCodigo;
 
+import java.util.Random;
 import jogoCodigo.Calculo.RandomCollection;
 
 public class Inimigo extends Personagem {   
@@ -15,8 +16,14 @@ public class Inimigo extends Personagem {
         rc.add(1, DRAGAO).add(1, TRASGO).add(1, OGRO)
                 .add(1, GIGANTE).add(1, BRUXA).add(1, VAMPIRO);
         
+        Random r = new Random();
+        int inimigoNivel;
+        
+        if (p.getNivel() == 1) inimigoNivel = 1 + r.nextInt(1);
+        else inimigoNivel = p.getNivel() - 1 + r.nextInt(2);
+        
         Inimigo i = rc.next();
-        i.defineNivel(p.getNivel());
+        i.defineNivel(inimigoNivel);
         
         return i;
     }
@@ -28,12 +35,12 @@ public class Inimigo extends Personagem {
     
     private void defineNivel(int nivel){
         this.nivel = nivel;
-        this.hp = this.nivel*20 + 100;
-        this.forca = this.nivel*2 + 3;
+        this.hp = this.nivel*20 + 50;
+        this.forca = this.nivel + 2;
     }
-
-    @Override public void atualizaNivel(){}
+    
     @Override public void evolui(){}
+    @Override public void melhora(){}
 
     @Override
     public void ataque(Personagem p, Ataque a) {

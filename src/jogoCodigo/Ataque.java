@@ -16,5 +16,10 @@ public class Ataque {
     public int getDano(){
         return dano;
     }
+
+    @Override
+    public String toString() {
+        return this.nome;
+    }
     
 }
