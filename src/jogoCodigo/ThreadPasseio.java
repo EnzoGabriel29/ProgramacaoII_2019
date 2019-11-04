@@ -1,7 +1,7 @@
 package jogoCodigo;
 
 import java.util.Random;
-import jogoCodigo.Calculo.RandomCollection;
+import jogoCodigo.Calculo.ColecaoAleatoria;
 
 public class ThreadPasseio extends Thread {
     private static final int ACAO_BAU = 0;
@@ -46,16 +46,16 @@ public class ThreadPasseio extends Thread {
                 int tempoEspera = r1.nextInt(5);
                 aguarda(tempoEspera);
 
-                RandomCollection<Integer> rca = new RandomCollection<>();
+                ColecaoAleatoria<Integer> rca = new ColecaoAleatoria<>();
                 rca.add(75, ACAO_BAU).add(25, ACAO_INIMIGO);
-                int acao = rca.next();
+                int acao = rca.retornaValor();
                 
                 switch (acao){
                     case ACAO_BAU: {
-                        RandomCollection<Integer> rci = new RandomCollection<>();
+                        ColecaoAleatoria<Integer> rci = new ColecaoAleatoria<>();
                         rci.add(10, ITEM_COMIDA).add(7, ITEM_POCAO)
                                 .add(7, ITEM_MOEDA).add(3, ITEM);                        
-                        int objeto = rci.next();
+                        int objeto = rci.retornaValor();
                         
                         switch (objeto){
                             case ITEM: {

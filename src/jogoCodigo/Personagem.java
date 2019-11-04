@@ -164,7 +164,7 @@ public abstract class Personagem extends Atributos {
     @Override public int getMaxHP(){ return this.maxHP; }
     @Override public int getInteligencia(){ return this.inteligencia; }
     public Ataque getAtaque(){ return ataque; }
-    public int getXp(){ return xp; }
+    public int getXP(){ return xp; }
     public int getNivel(){ return nivel; }
     public String getApelido(){ return apelido; }
     public int getFome(){ return fome; }

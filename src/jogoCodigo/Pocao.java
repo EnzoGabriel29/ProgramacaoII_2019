@@ -26,10 +26,10 @@ public class Pocao extends ItemConsumivel {
     });
     
     public static Pocao retornaPocao(){
-        Calculo.RandomCollection<Pocao> rca = new Calculo.RandomCollection<>();
+        Calculo.ColecaoAleatoria<Pocao> rca = new Calculo.ColecaoAleatoria<>();
         rca.add(75, VIDA).add(25, FORCA).add(25, SAGAC);
 
-        return rca.next();
+        return rca.retornaValor();
     }
     
     private final Atributos atributos;

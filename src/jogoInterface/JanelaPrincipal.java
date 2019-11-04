@@ -22,6 +22,59 @@ public class JanelaPrincipal extends JFrame {
         tAreaLog.setText(texto + "\n" + tAreaLog.getText());
     }
     
+    private void setHP(int valor, int valorMax){
+        labelHP.setText(String.valueOf(valor));
+        
+        int novoValor = (int) (((float) valor/valorMax)*100);
+        barraHP.setValue(novoValor);
+    }
+    
+    private void setXP(int valor){
+        labelXP.setText(String.valueOf(valor));
+        barraXP.setValue(valor);
+    }
+    
+    private void setFome(int valor){
+        labelFome.setText(String.valueOf(valor));
+        barraFome.setValue(valor);
+    }
+    
+    private void setComidas(List<Comida> comidas){
+        DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
+                
+        for (int i = 0; i <= comidas.size(); i++)
+            model.setValueAt("", i, 1);
+                
+        for (int i = 0; i < comidas.size(); i++)
+            model.setValueAt(comidas.get(i).getNome(), i, 1);
+    }
+    
+    private void setPocoes(List<Pocao> pocoes){
+        DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
+                
+        for (int i = 0; i <= pocoes.size(); i++)
+            model.setValueAt("", i, 2);
+        
+        for (int i = 0; i < pocoes.size(); i++)
+            model.setValueAt(pocoes.get(i).getNome(), i, 2);
+    }
+    
+    private void setAtaques(List<Ataque> ataques){
+        int ultimoSel = cbAtaques.getSelectedIndex();
+        cbAtaques.removeAllItems();
+        ataques.forEach((a) -> {
+            cbAtaques.addItem(a.getNome());
+        });
+        
+        cbAtaques.setSelectedIndex(ultimoSel == -1 ? 0 : ultimoSel);
+    }
+    
+    private void setAtributos(Personagem p){
+        labelForca.setText(String.valueOf(p.getForca()));
+        labelInteligencia.setText(String.valueOf(p.getInteligencia()));
+        labelCarteira.setText(String.valueOf(p.mochila.getCarteira()));
+    }
+        
     public JanelaPrincipal(Personagem p) {   
         initComponents();
         this.personagem = p;
@@ -31,17 +84,12 @@ public class JanelaPrincipal extends JFrame {
         this.personagem.setListener(new Personagem.AtributosListener(){
             @Override
             public void alteraHP(){
-                labelHP.setText(String.valueOf(personagem.getHP()));
-                int novoHP = (int) (((float) personagem.getHP()/
-                        personagem.getMaxHP())*100);
-                
-                barraHP.setValue(novoHP);
+                setHP(personagem.getHP(), personagem.getMaxHP());
             }
 
             @Override
             public void alteraXP(){
-                labelXP.setText(String.valueOf(personagem.getXp()));
-                barraXP.setValue(personagem.getXp());
+                setXP(personagem.getXP());
             }
 
             @Override
@@ -57,8 +105,7 @@ public class JanelaPrincipal extends JFrame {
             
             @Override
             public void alteraFome(){
-                barraFome.setValue(personagem.getFome());
-                labelFome.setText(String.valueOf(personagem.getFome()));
+                setFome(personagem.getFome());
             }
             
             @Override
@@ -71,53 +118,31 @@ public class JanelaPrincipal extends JFrame {
             
             @Override
             public void atualizaComidas(){
-                List<Comida> comidas = personagem.mochila.retornaComidas();
-                DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
-                
-                for (int i = 0; i < comidas.size()+1; i++)
-                    model.setValueAt("", i, 1);
-                
-                for (int i = 0; i < comidas.size(); i++)
-                    model.setValueAt(comidas.get(i).getNome(), i, 1);
+                setComidas(personagem.mochila.retornaComidas());
             }
             
             @Override
             public void atualizaPocoes(){
-                List<Pocao> pocoes = personagem.mochila.retornaPocoes();
-                DefaultTableModel model = (DefaultTableModel)tabelaMochila.getModel();
-                
-                for (int i = 0; i < pocoes.size()+1; i++)
-                    model.setValueAt("", i, 2);
-                
-                for (int i = 0; i < pocoes.size(); i++)
-                    model.setValueAt(pocoes.get(i).getNome(), i, 2);
+                setPocoes(personagem.mochila.retornaPocoes());
             }
             
             @Override
             public void atualizaAtaques(){
-                List<Ataque> ataques = personagem.mochila.retornaAtaques();
-                int ultimoSel = cbAtaques.getSelectedIndex();
-                
-                cbAtaques.removeAllItems();
-                
-                ataques.forEach((a) -> {
-                    cbAtaques.addItem(a.getNome());
-                });
-                
-                cbAtaques.setSelectedIndex(ultimoSel == -1 ? 0 : ultimoSel);
+                setAtaques(personagem.mochila.retornaAtaques());
             }
             
             @Override
             public void atualizaAtributos(){
-                labelForca.setText(String.valueOf(personagem.getForca()));
-                labelInteligencia.setText(String.valueOf(personagem.getInteligencia()));
-                labelCarteira.setText(String.valueOf(personagem.mochila.getCarteira()));
+                setAtributos(personagem);
             }
         });
         
-        this.personagem.listener.atualizaAtaques();
-        this.personagem.listener.atualizaComidas();
-        this.personagem.listener.atualizaAtributos();
+        this.setAtaques(personagem.mochila.retornaAtaques());
+        this.setComidas(personagem.mochila.retornaComidas());
+        this.setAtributos(personagem);
+        this.setHP(personagem.getHP(), personagem.getMaxHP());
+        this.setXP(personagem.getXP());
+        this.setFome(personagem.getFome());
         
         this.labelNome.setText(this.personagem.getApelido());
         this.labelClasse.setText(this.personagem.getClass().getSimpleName());
@@ -296,9 +321,14 @@ public class JanelaPrincipal extends JFrame {
         cbAtaques.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 int i = cbAtaques.getSelectedIndex();
-                Ataque a = personagem.mochila.retornaAtaque(i);
-                personagem.defineAtaque(a);
-                System.out.println(a.getNome());
+                if(i!=-1){
+                    Ataque a = personagem.mochila.retornaAtaque(i);
+                    personagem.defineAtaque(a);
+                    System.out.println(a.getNome());
+                }
+                System.out.println(cbAtaques.getItemCount());
+                
+               
             }
         });
         

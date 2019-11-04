@@ -6,29 +6,30 @@ import java.util.TreeMap;
 
 public class Calculo {
     
-    public static class RandomCollection<E> {
+    // https://stackoverflow.com/questions/6409652
+    public static class ColecaoAleatoria<E> {
         private final NavigableMap<Double, E> map = new TreeMap<>();
         private final Random random;
         private double total = 0;
 
-        public RandomCollection() {
+        public ColecaoAleatoria(){
             this(new Random());
         }
 
-        public RandomCollection(Random random) {
+        public ColecaoAleatoria(Random random){
             this.random = random;
         }
 
-        public RandomCollection<E> add(double weight, E result) {
-            if (weight <= 0) return this;
-            total += weight;
-            map.put(total, result);
+        public ColecaoAleatoria<E> add(double peso, E valor){
+            if (peso <= 0) return this;
+            total += peso;
+            map.put(total, valor);
             return this;
         }
 
-        public E next() {
-            double value = random.nextDouble() * total;
-            return map.higherEntry(value).getValue();
+        public E retornaValor() {
+            double valor = random.nextDouble() * total;
+            return map.higherEntry(valor).getValue();
         }
     }
     

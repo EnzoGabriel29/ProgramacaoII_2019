@@ -1,6 +1,6 @@
 package jogoCodigo;
 
-import jogoCodigo.Calculo.RandomCollection;
+import jogoCodigo.Calculo.ColecaoAleatoria;
 
 public class Comida extends ItemConsumivel {
     public static final Comida UVA      = new Comida("Uva", 1);
@@ -12,13 +12,25 @@ public class Comida extends ItemConsumivel {
     public int fomeRestaurada;
     
     public static Comida retornaComida(){
-        RandomCollection<Comida> rcc = new RandomCollection<>();
+        ColecaoAleatoria<Comida> rcc = new ColecaoAleatoria<>();
         
-        rcc.add(6, UVA).add(5, MACA)
-            .add(4, BANANA).add(3, CENOURA)
-            .add(2, ENSOPADO).add(1, FRANGO);                        
+        // total = 1 + 2 + 3 + 4 + 5 + 6 = 21
+        // define uma probabilidade de cada item aparecer
+        //     6/21 = 28% de aparecer uma uva
+        //     5/21 = 23% de aparecer uma maçã
+        //     4/21 = 19% de aparecer uma banana
+        //     3/21 = 14% de aparecer uma cenoura
+        //     2/21 =  9% de aparecer um ensopado
+        //     1/21 =  4% de aparecer um frango
         
-        return rcc.next();
+        rcc.add(6, UVA)
+           .add(5, MACA)
+           .add(4, BANANA)
+           .add(3, CENOURA)
+           .add(2, ENSOPADO)
+           .add(1, FRANGO);                        
+        
+        return rcc.retornaValor();
     }
     
     public Comida(String nome, int fomeRest){
