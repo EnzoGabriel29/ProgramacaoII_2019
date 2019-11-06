@@ -1,39 +1,42 @@
 package jogoCodigo;
 
-import java.util.Random;
 import jogoCodigo.Calculo.ColecaoAleatoria;
 
-public class Inimigo extends Personagem {   
-    public static final Inimigo DRAGAO = new Inimigo("Dragão", 1);
-    public static final Inimigo TRASGO = new Inimigo("Trasgo", 1);
-    public static final Inimigo OGRO = new Inimigo("Ogro", 1);
-    public static final Inimigo GIGANTE = new Inimigo("Gigante", 1);
-    public static final Inimigo BRUXA = new Inimigo("Bruxa", 1);
-    public static final Inimigo VAMPIRO = new Inimigo("Vampiro", 1);
+public class Inimigo extends Personagem {
+    enum TipoInimigo {
+        DRAGAO, TRASGO, OGRO, GIGANTE, BRUXA, VAMPIRO
+    }
     
-    public static Inimigo retornaInimigo(Personagem p){
-        ColecaoAleatoria<Inimigo> rc = new ColecaoAleatoria<>();
-        rc.add(1, DRAGAO).add(1, TRASGO).add(1, OGRO)
-                .add(1, GIGANTE).add(1, BRUXA).add(1, VAMPIRO);
+    public static Inimigo retornaInimigo(int nivel){
+        ColecaoAleatoria<TipoInimigo> ca = new ColecaoAleatoria<>();
         
-        Random r = new Random();
-        int inimigoNivel;
+        ca.add(1, TipoInimigo.DRAGAO)
+                .add(1, TipoInimigo.TRASGO)
+                .add(1, TipoInimigo.OGRO)
+                .add(1, TipoInimigo.GIGANTE)
+                .add(1, TipoInimigo.BRUXA)
+                .add(1, TipoInimigo.VAMPIRO);
         
-        if (p.getNivel() == 1) inimigoNivel = 1;
-        else inimigoNivel = p.getNivel() - 1;
+        int inimigoNivel = nivel == 1 ? 1 : nivel - 1;
         
-        Inimigo i = rc.retornaValor();
-        i.defineNivel(inimigoNivel);
+        switch (ca.retornaValor()){
+            case DRAGAO: return new Inimigo("Dragão", inimigoNivel);
+            case TRASGO: return new Inimigo("Trasgo", inimigoNivel);
+            case OGRO: return new Inimigo("Ogro", inimigoNivel);
+            case GIGANTE: return new Inimigo("Gigante", inimigoNivel);
+            case BRUXA: return new Inimigo("Bruxa", inimigoNivel);
+            case VAMPIRO: return new Inimigo("Vampiro", inimigoNivel);        
+        }
         
-        return i;
+        return null;
     }
     
     public Inimigo(String nome, int nivel){
         super(nome);
-        this.nivel = nivel;
+        this.setNivel(nivel);
     }
     
-    private void defineNivel(int nivel){
+    private void setNivel(int nivel){
         this.nivel = nivel;
         this.hp = this.nivel*20 + 50;
         this.forca = this.nivel + 2;

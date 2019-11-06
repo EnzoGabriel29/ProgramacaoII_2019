@@ -32,10 +32,6 @@ public class ThreadPasseio extends Thread {
     public void desativa(){
         this.isPasseio = false;
     }
-    
-    public void defineAtaque(Ataque a){
-        this.ataqueAtual = a;
-    }
         
     @Override
     public void run(){
@@ -87,11 +83,14 @@ public class ThreadPasseio extends Thread {
                     }
 
                     case ACAO_INIMIGO: { 
-                        Inimigo in = Inimigo.retornaInimigo(personagem);
+                        Inimigo in = Inimigo.retornaInimigo(personagem.getNivel());
                         boolean batalhaConcluida = this.iniciaBatalha(in);
                         
-                        if (batalhaConcluida) listenerBatalha.terminaBatalha();
+                        if (batalhaConcluida)
+                            listenerBatalha.terminaBatalha();
+                        
                         else listenerBatalha.jogadorFugiu();
+                        
                         isPasseio = batalhaConcluida;
                     }
                 }
@@ -110,7 +109,7 @@ public class ThreadPasseio extends Thread {
             in.ataque(personagem, new Ataque("Padrão", 20));
             
             personagem.ataque(in, ataqueAtual);
-            listenerBatalha.terminaRodada(personagem, in);
+            listenerBatalha.terminaRodada(in);
                     
             aguarda(1);
             
@@ -129,7 +128,7 @@ public class ThreadPasseio extends Thread {
     
     public static interface BattleActionListener {
         public void terminaBatalha();
-        public void terminaRodada(Personagem p, Personagem in);
+        public void terminaRodada(Personagem in);
         public void inimigoEncontrado(Personagem in);
         public void jogadorFugiu();
         public void encontraBau();

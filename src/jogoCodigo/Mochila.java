@@ -39,7 +39,6 @@ public class Mochila {
     }
     
     public Ataque retornaAtaque(int pos){
-        System.out.println(Arrays.toString(this.ataques.toArray()));
         return this.ataques.get(pos);
     }
     

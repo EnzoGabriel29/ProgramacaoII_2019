@@ -3,10 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/usuario/NetBeansProjects/ProgramacaoII_2019/src/jogoCodigo/Atributos.java</file>
-            <file>file:/home/usuario/NetBeansProjects/ProgramacaoII_2019/src/jogoCodigo/Personagem.java</file>
-            <file>file:/home/usuario/NetBeansProjects/ProgramacaoII_2019/src/jogoInterface/JanelaPrincipal.java</file>
-            <file>file:/home/usuario/NetBeansProjects/ProgramacaoII_2019/src/jogoCodigo/ThreadPasseio.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoCodigo/Item.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoCodigo/Mochila.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoCodigo/Comida.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoCodigo/ThreadPasseio.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoCodigo/ClassePrincipal.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoInterface/JanelaPrincipal.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoInterface/JanelaLoja.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoCodigo/Pocao.java</file>
+            <file>file:/home/usuario/Área%20de%20Trabalho/github-projects/codigos-programacao-ii/src/jogoCodigo/ItemConsumivel.java</file>
         </group>
     </open-files>
 </project-private>

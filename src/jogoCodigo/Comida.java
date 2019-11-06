@@ -3,34 +3,32 @@ package jogoCodigo;
 import jogoCodigo.Calculo.ColecaoAleatoria;
 
 public class Comida extends ItemConsumivel {
-    public static final Comida UVA      = new Comida("Uva", 1);
-    public static final Comida MACA     = new Comida("Maçã", 2);
-    public static final Comida BANANA   = new Comida("Banana", 5);
-    public static final Comida CENOURA  = new Comida("Cenoura", 10);
-    public static final Comida ENSOPADO = new Comida("Ensopado", 20);
-    public static final Comida FRANGO   = new Comida("Frango", 50);
+    enum TipoComida {
+        UVA, MACA, BANANA, CENOURA, ENSOPADO, FRANGO
+    }
+    
     public int fomeRestaurada;
     
     public static Comida retornaComida(){
-        ColecaoAleatoria<Comida> rcc = new ColecaoAleatoria<>();
+        ColecaoAleatoria<TipoComida> ca = new ColecaoAleatoria<>();
         
-        // total = 1 + 2 + 3 + 4 + 5 + 6 = 21
-        // define uma probabilidade de cada item aparecer
-        //     6/21 = 28% de aparecer uma uva
-        //     5/21 = 23% de aparecer uma maçã
-        //     4/21 = 19% de aparecer uma banana
-        //     3/21 = 14% de aparecer uma cenoura
-        //     2/21 =  9% de aparecer um ensopado
-        //     1/21 =  4% de aparecer um frango
+        ca.add(6, TipoComida.UVA)
+           .add(5, TipoComida.MACA)
+           .add(4, TipoComida.BANANA)
+           .add(3, TipoComida.CENOURA)
+           .add(2, TipoComida.ENSOPADO)
+           .add(1, TipoComida.FRANGO);                        
         
-        rcc.add(6, UVA)
-           .add(5, MACA)
-           .add(4, BANANA)
-           .add(3, CENOURA)
-           .add(2, ENSOPADO)
-           .add(1, FRANGO);                        
+        switch(ca.retornaValor()){
+            case UVA: return new Comida("Uva", 1);
+            case MACA: return new Comida("Maçã", 2);
+            case BANANA: return new Comida("Banana", 5);
+            case CENOURA: return new Comida("Cenoura", 10);
+            case ENSOPADO: return new Comida("Ensopado", 20);
+            case FRANGO: return new Comida("Frango", 50);
+        }
         
-        return rcc.retornaValor();
+        return null;
     }
     
     public Comida(String nome, int fomeRest){

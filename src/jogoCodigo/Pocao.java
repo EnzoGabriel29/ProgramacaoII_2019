@@ -1,8 +1,5 @@
 package jogoCodigo;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 public class Pocao extends ItemConsumivel {
     public static final Pocao VIDA = new Pocao("Poção de vida", new Atributos(){
         @Override public int getHP(){ return 30; }

@@ -62,9 +62,9 @@ public class JanelaPrincipal extends JFrame {
     private void setAtaques(List<Ataque> ataques){
         int ultimoSel = cbAtaques.getSelectedIndex();
         cbAtaques.removeAllItems();
-        ataques.forEach((a) -> {
+        
+        for (Ataque a : ataques)
             cbAtaques.addItem(a.getNome());
-        });
         
         cbAtaques.setSelectedIndex(ultimoSel == -1 ? 0 : ultimoSel);
     }
@@ -137,40 +137,32 @@ public class JanelaPrincipal extends JFrame {
             }
         });
         
+        this.labelNome.setText(this.personagem.getApelido());
+        this.labelClasse.setText(this.personagem.getClass().getSimpleName());
+        this.labelNivel.setText(String.valueOf(this.personagem.getNivel()));
+        
         this.setAtaques(personagem.mochila.retornaAtaques());
         this.setComidas(personagem.mochila.retornaComidas());
         this.setAtributos(personagem);
         this.setHP(personagem.getHP(), personagem.getMaxHP());
         this.setXP(personagem.getXP());
-        this.setFome(personagem.getFome());
-        
-        this.labelNome.setText(this.personagem.getApelido());
-        this.labelClasse.setText(this.personagem.getClass().getSimpleName());
-        this.labelNivel.setText(String.valueOf(this.personagem.getNivel()));
-        this.labelFome.setText(String.valueOf(this.personagem.getFome()));
-        this.personagem.aumentaHP(0);
-        this.personagem.aumentaXP(0);
-        this.personagem.aumentaFome(0);
+        this.setFome(personagem.getFome());        
         
         this.personagem.defineAtaque(new Ataque("Sem ataque", 0));
         
         this.tp = new ThreadPasseio(p);
-        this.tp.defineAtaque(personagem.getAtaque());
         this.tp.start();
         this.tp.setListenerBatalha(new ThreadPasseio.BattleActionListener(){
             @Override
             public void terminaBatalha() {
                 atualizaLog("A batalha terminou!");
-                atualizaLog("A vida de " + personagem.getApelido() +
-                        " foi " + "restaurada e foram adquiridos " + 
-                        personagem.getNivel()*10 + " pontos de XP.");
-                
+                atualizaLog("Você adquiriu " + personagem.getNivel()*10 + " pontos de XP.");
                 personagem.melhora();
             }
 
             @Override
-            public void terminaRodada(Personagem pe, Personagem in) {
-                atualizaLog(pe.getApelido() + " tem " + pe.getHP() +
+            public void terminaRodada(Personagem in) {
+                atualizaLog("Você tem " + personagem.getHP() +
                         " de HP e o inimigo " + in.getApelido() +
                         " tem " + in.getHP() + " de HP.");
             }
@@ -218,7 +210,7 @@ public class JanelaPrincipal extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e){
                 if (btnPassear.getText().equals("Dar um passeio")){
-                    btnTreinar.setEnabled(false);
+                    btnLoja.setEnabled(false);
                     tp.ativa();
                     atualizaLog("Você está dando uma volta...");
                     btnPassear.setText("Voltar para casa");
@@ -227,7 +219,7 @@ public class JanelaPrincipal extends JFrame {
                     tp.desativa();
                     atualizaLog("Você voltou para casa.");
                     btnPassear.setText("Dar um passeio");
-                    btnTreinar.setEnabled(true);
+                    btnLoja.setEnabled(true);
                 }
             }
         });
@@ -265,9 +257,7 @@ public class JanelaPrincipal extends JFrame {
                         Pocao p = personagem.mochila.retornaPocao(lin);
                         
                         if (p != null){
-                            atualizaLog("Você consumiu a poção " +
-                                    p.getNome() + "!");
-                            
+                            atualizaLog("Você consumiu a poção " + p.getNome() + "!");                            
                             personagem.mochila.removePocao(lin);
                             personagem.bebe(p);
                         }
@@ -319,23 +309,27 @@ public class JanelaPrincipal extends JFrame {
         });
         
         cbAtaques.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e){
-                int i = cbAtaques.getSelectedIndex();
-                if(i!=-1){
-                    Ataque a = personagem.mochila.retornaAtaque(i);
+                int indAtaque = cbAtaques.getSelectedIndex();
+                if (indAtaque != -1){
+                    Ataque a = personagem.mochila.retornaAtaque(indAtaque);
                     personagem.defineAtaque(a);
-                    System.out.println(a.getNome());
                 }
-                System.out.println(cbAtaques.getItemCount());
-                
-               
             }
         });
         
-        
-        btnLoja.addActionListener(new ActionListener(){
+        btnXP.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e){
                 personagem.aumentaXP(30);
+            }
+        });
+        
+        btnLoja.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                new JanelaLoja(personagem).setVisible(true);
             }
         });
     }
@@ -369,10 +363,10 @@ public class JanelaPrincipal extends JFrame {
         labelXP = new javax.swing.JLabel();
         labelFome = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        btnTreinar = new javax.swing.JButton();
+        btnLoja = new javax.swing.JButton();
         btnPassear = new javax.swing.JButton();
         btnLimpaLog = new javax.swing.JButton();
-        btnLoja = new javax.swing.JButton();
+        btnXP = new javax.swing.JButton();
         btnUsarItem = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -576,13 +570,13 @@ public class JanelaPrincipal extends JFrame {
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
-        btnTreinar.setText("Iniciar treinamento");
+        btnLoja.setText("Ir para a loja");
 
         btnPassear.setText("Dar um passeio");
 
         btnLimpaLog.setText("Limpar registro");
 
-        btnLoja.setText("Aumenta XP em 30");
+        btnXP.setText("Aumenta XP em 30");
 
         btnUsarItem.setText("Utilizar item");
 
@@ -590,23 +584,23 @@ public class JanelaPrincipal extends JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnTreinar, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+            .addComponent(btnLoja, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
             .addComponent(btnPassear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLimpaLog, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnLoja, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnXP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnUsarItem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnTreinar)
+                .addComponent(btnLoja)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnPassear)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLimpaLog)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnLoja)
+                .addComponent(btnXP)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnUsarItem)
                 .addContainerGap(18, Short.MAX_VALUE))
@@ -614,6 +608,7 @@ public class JanelaPrincipal extends JFrame {
 
         tAreaLog.setColumns(20);
         tAreaLog.setRows(5);
+        tAreaLog.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         tAreaLog.setEnabled(false);
         jScrollPane1.setViewportView(tAreaLog);
 
@@ -635,7 +630,7 @@ public class JanelaPrincipal extends JFrame {
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1, Short.MAX_VALUE)
+            .addGap(0, 4, Short.MAX_VALUE)
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -644,6 +639,7 @@ public class JanelaPrincipal extends JFrame {
 
         txtDescricaoItem.setColumns(20);
         txtDescricaoItem.setRows(5);
+        txtDescricaoItem.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtDescricaoItem.setEnabled(false);
         jScrollPane5.setViewportView(txtDescricaoItem);
 
@@ -731,14 +727,16 @@ public class JanelaPrincipal extends JFrame {
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -757,9 +755,9 @@ public class JanelaPrincipal extends JFrame {
                             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
+                        .addGap(22, 22, 22)
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -776,8 +774,8 @@ public class JanelaPrincipal extends JFrame {
     private javax.swing.JButton btnLimpaLog;
     private javax.swing.JButton btnLoja;
     private javax.swing.JButton btnPassear;
-    private javax.swing.JButton btnTreinar;
     private javax.swing.JButton btnUsarItem;
+    private javax.swing.JButton btnXP;
     private javax.swing.JComboBox cbAtaques;
     private javax.swing.JLabel fxLabel1;
     private javax.swing.JLabel fxLabel2;
