@@ -2,7 +2,6 @@ package jogoCodigo;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Mochila {
     private final Personagem personagem;
@@ -21,34 +20,32 @@ public class Mochila {
         this.ataques.add(atkNulo);
     }
     
-    public List<Pocao> retornaPocoes(){
+    public List<Pocao> getPocoes(){
         return new ArrayList<>(this.pocoes);
     }
     
-    public List<Comida> retornaComidas(){
+    public List<Comida> getComidas(){
         return new ArrayList<>(this.comidas);
     }
     
-    public List<Ataque> retornaAtaques(){
+    public List<Ataque> getAtaques(){
         return new ArrayList<>(this.ataques);
     }
     
-    public Pocao retornaPocao(int pos){
+    public Pocao getPocao(int pos){
         return this.pocoes.get(pos);
-        
     }
     
-    public Ataque retornaAtaque(int pos){
+    public Ataque getAtaque(int pos){
         return this.ataques.get(pos);
     }
     
-    public Comida retornaComida(int pos){
-        try {
-            return this.comidas.get(pos);
-        
-        } catch (IndexOutOfBoundsException e){
-            return null;
-        }
+    public Comida getComida(int pos){
+        return this.comidas.get(pos);
+    }
+    
+    public int getCarteira(){
+        return this.carteira;
     }
     
     public void adicionaAtaque(Ataque a){
@@ -57,8 +54,34 @@ public class Mochila {
     }
     
     public void adicionaComida(Comida c){
-        this.comidas.add(c);
+        String nome = c.getNome();
+        boolean isDuplicado = false;
+        
+        for (Comida cmd : this.comidas){
+            if (cmd.getNome().equals(nome)){
+                cmd.aumentaContador(1);
+                isDuplicado = true;
+                break;
+            }
+        }
+        if (!isDuplicado) this.comidas.add(c);
         this.personagem.listener.atualizaComidas();
+    }
+    
+    public void adicionaPocao(Pocao p){
+        String nome = p.getNome();
+        boolean isDuplicado = false;
+        
+        for (Pocao pco : this.pocoes){
+            if (pco.getNome().equals(nome)){
+                pco.aumentaContador(1);
+                isDuplicado = true;
+                break;
+            }
+        }
+        
+        if (!isDuplicado) this.pocoes.add(p);
+        this.personagem.listener.atualizaPocoes();
     }
     
     public void adicionaCarteira(int moedas){
@@ -73,21 +96,23 @@ public class Mochila {
     }
     
     public void removeComida(int pos){
-        this.comidas.remove(pos);
+        Comida c = this.comidas.get(pos);
+        if (c.getContador() == 1)
+            this.comidas.remove(pos);
+        else
+            c.diminuiContador(1);
+        
         this.personagem.listener.atualizaComidas();
     }
     
-    public void adicionaPocao(Pocao p){
-        this.pocoes.add(p);
-        this.personagem.listener.atualizaPocoes();
-    }
-    
     public void removePocao(int pos){
-        this.pocoes.remove(pos);
+        Pocao p = this.pocoes.get(pos);
+        
+        if (p.getContador() == 1)
+            this.pocoes.remove(pos);
+        else
+            p.diminuiContador(1);
+        
         this.personagem.listener.atualizaPocoes();
-    }
-    
-    public int getCarteira(){
-        return this.carteira;
     }
 }

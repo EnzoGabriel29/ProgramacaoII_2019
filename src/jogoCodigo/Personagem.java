@@ -31,6 +31,7 @@ public abstract class Personagem extends Atributos {
             @Override public void atualizaAtaques(){}
             @Override public void atualizaPocoes(){}
             @Override public void atualizaAtributos(){}
+            @Override public void utilizaPocao(Pocao p){}
         };
         
         // Thread que monitora a fome do personagem.
@@ -70,6 +71,16 @@ public abstract class Personagem extends Atributos {
         this.forca += a.getForca();
         this.maxHP += a.getMaxHP();
         this.inteligencia += a.getInteligencia();
+        listener.atualizaAtributos();
+    }
+    
+    public void retiraAtributos(Atributos a){
+        if (a.getHP() > 0) this.diminuiHP(a.getHP());
+        else this.aumentaHP(a.getHP());
+        
+        this.forca -= a.getForca();
+        this.maxHP -= a.getMaxHP();
+        this.inteligencia -= a.getInteligencia();
         listener.atualizaAtributos();
     }
     
@@ -142,7 +153,8 @@ public abstract class Personagem extends Atributos {
     }
     
     public void bebe(Pocao p){
-        this.atualizaAtributos(p.retornaAtributos());
+        this.atualizaAtributos(p.getAtributos());
+        this.listener.utilizaPocao(p);
     }
     
     // Utilizado para alterar atributos na interface gráfica.
@@ -157,6 +169,7 @@ public abstract class Personagem extends Atributos {
         public void atualizaComidas();
         public void atualizaAtaques();
         public void atualizaPocoes();
+        public void utilizaPocao(Pocao p);
     }
     
     @Override public int getHP(){ return this.hp; }
