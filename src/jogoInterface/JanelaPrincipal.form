@@ -41,7 +41,7 @@
     </Container>
   </NonVisualComponents>
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -424,7 +424,6 @@
               <Component id="barraPocaoSagacidade" alignment="1" max="32767" attributes="0"/>
               <Component id="barraPocaoForca" alignment="0" max="32767" attributes="0"/>
               <Component id="barraHPInimigo" alignment="0" max="32767" attributes="0"/>
-              <Component id="barraPocaoProtecao" alignment="0" max="32767" attributes="0"/>
               <Group type="102" attributes="0">
                   <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
@@ -480,9 +479,7 @@
                       <Component id="checkBotas" max="32767" attributes="0"/>
                       <Component id="barraBotas" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="barraPocaoProtecao" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="24" max="32767" attributes="0"/>
                   <Component id="barraPocaoSagacidade" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="barraPocaoForca" min="-2" max="-2" attributes="0"/>
@@ -516,8 +513,6 @@
         <Component class="javax.swing.JProgressBar" name="barraPocaoSagacidade">
         </Component>
         <Component class="javax.swing.JProgressBar" name="barraHPInimigo">
-        </Component>
-        <Component class="javax.swing.JProgressBar" name="barraPocaoProtecao">
         </Component>
         <Component class="javax.swing.JProgressBar" name="barraElmo">
         </Component>

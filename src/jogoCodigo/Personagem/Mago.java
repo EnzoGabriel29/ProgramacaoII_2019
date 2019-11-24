@@ -3,6 +3,16 @@ package jogoCodigo.Personagem;
 import jogoCodigo.Ataque;
 import jogoCodigo.Atributos;
 
+/**
+ * Fornece a classe de jogo Mago.
+ * A cada ataque, é adicionado 10% do valor da inteligência do personagem.
+ * A cada vitória de batalha, é adicionado 3 pontos de inteligência e 1 ponto
+ * de força. A cada avanço de nível, é adicionado o triplo do valor do novo
+ * nível à inteligência, além de 10 pontos de força e 19 vezes o valor do novo
+ * nível ao HP máximo. Ao começar o jogo, o mago começa com 20 pontos a mais
+ * de inteligência em comparação às outras classes de personagens.
+ * @author Enzo
+ */
 public class Mago extends Personagem {
     private static final Ataque ATK001 = new Ataque("Raio de energia", 20);
     private static final Ataque ATK002 = new Ataque("Espinhos mágicos", 30);
@@ -13,7 +23,7 @@ public class Mago extends Personagem {
     
     public Mago(String apelido) {
         super(apelido);
-        this.inteligencia = 20;
+        this.inteligencia += 20;
     }
 
     @Override

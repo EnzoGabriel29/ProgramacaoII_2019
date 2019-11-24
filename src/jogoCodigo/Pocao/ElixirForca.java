@@ -2,6 +2,11 @@ package jogoCodigo.Pocao;
 
 import jogoCodigo.Atributos;
 
+/**
+ * Adiciona um elixir que aumenta em 20 o nível de força à poção.
+ * Aparece de vez em quando para a classe de personagem Gladiador.
+ * @author Enzo
+ */
 public class ElixirForca extends DecoratorPocao {
     public ElixirForca(Pocao p) {
         super(p);

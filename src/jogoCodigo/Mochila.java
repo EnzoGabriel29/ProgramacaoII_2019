@@ -6,6 +6,14 @@ import jogoCodigo.Personagem.Personagem;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Fornece uma funcionalidade de mochila para o personagem.
+ * Nela, é possível guardar itens que são coletados durante
+ * o jogo, como itens construíveis, poções e comidas. Além
+ * disso, é possível guardar uma carteira, que é onde ficam
+ * as moedas que o personagem coleta, além dos seus ataques.
+ * @author Enzo
+ */
 public class Mochila {
     public static final int ITEM = 0;
     public static final int POCAO = 1;
@@ -19,6 +27,10 @@ public class Mochila {
     
     private int carteira;
     
+    /**
+     * Inicializa uma mochila.
+     * @param p personagem associado.
+     */
     public Mochila(Personagem p){
         this.personagem = p;
         
@@ -31,6 +43,10 @@ public class Mochila {
         this.ataques.add(atkNulo);
         this.personagem.listener.atualizaAtaques();
     }
+    
+    /**
+     * Getters and setters para os slots da mochila.
+     */
     
     private void adicionaItem(Object o, int tipo){
         switch (tipo){
@@ -68,15 +84,15 @@ public class Mochila {
     }
     
     public List<ItemConstruivel> getItens(){
-        return (ArrayList<ItemConstruivel>) this.retornaItens(ITEM);
+        return (List<ItemConstruivel>) this.retornaItens(ITEM);
     }
     
     public List<Pocao> getPocoes(){
-        return (ArrayList<Pocao>) this.retornaItens(POCAO);
+        return (List<Pocao>) this.retornaItens(POCAO);
     }
     
     public List<Comida> getComidas(){
-        return (ArrayList<Comida>) this.retornaItens(COMIDA);
+        return (List<Comida>) this.retornaItens(COMIDA);
     }
     
     public ItemConstruivel getItem(int pos){

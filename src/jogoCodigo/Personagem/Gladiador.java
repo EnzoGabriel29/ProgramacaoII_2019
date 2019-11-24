@@ -3,6 +3,16 @@ package jogoCodigo.Personagem;
 import jogoCodigo.Ataque;
 import jogoCodigo.Atributos;
 
+/**
+ * Fornece a classe de jogo Gladiador.
+ * A cada ataque, é adicionado 10% do valor da força do personagem.
+ * A cada vitória de batalha, é adicionado 3 pontos de força.
+ * A cada avanço de nível, é adicionado o triplo do valor do novo nível à
+ * força, além de 10 pontos de inteligência e 19 vezes o valor do novo nível
+ * ao HP máximo. Ao começar o jogo, o gladiador começa com 20 pontos a mais
+ * de força em comparação às outras classes de personagens.
+ * @author Enzo
+ */
 public class Gladiador extends Personagem {
     private static final Ataque ATK001 = new Ataque("Soco paralisante", 20);
     private static final Ataque ATK002 = new Ataque("Picada de abelha", 30);
@@ -13,7 +23,7 @@ public class Gladiador extends Personagem {
     
     public Gladiador(String apelido){
         super(apelido);
-        this.forca = 20;
+        this.forca += 20;
     }
     
     @Override

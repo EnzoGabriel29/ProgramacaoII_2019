@@ -2,6 +2,11 @@ package jogoCodigo.Pocao;
 
 import jogoCodigo.Atributos;
 
+/**
+ * Adiciona um elixir que aumenta em 20 o nível de HP à poção.
+ * Aparece de vez em quando para a classe de personagem Curandeiro.
+ * @author Enzo
+ */
 public class ElixirVida extends DecoratorPocao {
     public ElixirVida(Pocao p){
         super(p);

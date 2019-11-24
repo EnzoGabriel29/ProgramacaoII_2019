@@ -6,8 +6,20 @@ import jogoCodigo.BancoDados.EnumPocao;
 import jogoCodigo.Calculo.ColecaoAleatoria;
 import jogoCodigo.ItemEmpilhavel;
 
+/**
+ * Providencia funções de poção no jogo. Cada personagem possui um atributo,
+ * como vida, inteligência, força e vida máxima. Ao utilizar uma poção, esse
+ * atributo pode atuar tanto instantaneamente (como a poção de vida) quanto
+ * ainda durar por um minuto após da poção ser consumida (como a poção de
+ * inteligência e de força).
+ * @author Enzo
+ */
 public class Pocao extends ItemEmpilhavel {
-    
+    /**
+     * Factory method que retorna uma poção de acordo com a classe do persongem.
+     * @param classe a classe do personagem que irá utilizá-la.
+     * @return a poção.
+     */
     public static Pocao retornaPocao(String classe){
         ColecaoAleatoria<EnumPocao> ca = new ColecaoAleatoria<>();
         ca.adicionaItem(75, EnumPocao.VIDA)
@@ -16,6 +28,9 @@ public class Pocao extends ItemEmpilhavel {
         
         Pocao pocaoRet = EnumPocao.getPocao(ca.retornaItem());
         
+        /**
+         * 33% de chance de um elixir ser adicionado à poção.
+         */
         switch (new Random().nextInt(3)){
             case 0: return pocaoRet;
             case 1: return pocaoRet;
@@ -34,16 +49,29 @@ public class Pocao extends ItemEmpilhavel {
     private final EnumPocao tipo;
     private final Atributos atributos;
     
+    /**
+     * Inicializa uma Pocao.
+     * @param nome nome da poção.
+     * @param atr atributos que essa poção irá restaurar.
+     */
     public Pocao(String nome, Atributos atr){
         this.nome = nome;
         this.atributos = atr;
         this.tipo = EnumPocao.porNome(nome);
     }
     
+    /**
+     * Getter para atributos.
+     * @return os atributos restaurados.
+     */
     public Atributos getAtributos(){
         return this.atributos;
     }
     
+    /**
+     * Getter para o tipo.
+     * @return o tipo dessa poção.
+     */
     public EnumPocao getTipo(){
         return this.tipo;
     }

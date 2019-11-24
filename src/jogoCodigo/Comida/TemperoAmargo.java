@@ -1,7 +1,7 @@
 package jogoCodigo.Comida;
 
 /**
- * Adiciona um tempero amargo na comida, que ao invés da fome do
+ * Adiciona um tempero amargo na comida que faz com que, ao invés da fome do
  * personagem diminuir quando se come, a fome do personagem é aumentada.
  * @author Enzo
  */

@@ -3,6 +3,8 @@ package jogoInterface;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import jogoCodigo.Ataque;
+import jogoCodigo.Personagem.Curandeiro;
+import jogoCodigo.Personagem.Gladiador;
 import jogoCodigo.Personagem.Mago;
 import jogoCodigo.Personagem.Personagem;
 
@@ -20,12 +22,20 @@ public class JanelaPreJogo extends Janela {
                 String classe = (String) comboClasse.getSelectedItem();
                 String dific = (String) comboDificuldade.getSelectedItem();
                 
-                Personagem p = new Mago(nome);
+                Personagem p;
+                switch (classe){
+                    case "Mago": p = new Mago(nome); break;
+                    case "Gladiador": p = new Gladiador(nome); break;
+                    case "Curandeiro": p = new Curandeiro(nome); break;
+                    default: throw new RuntimeException("não deveria entrar aqui");
+                }
                 
-                int numDific = 0;
+                int numDific;
                 switch (dific){
-                    case "Médio": numDific = 1;
-                    case "Difícil": numDific = 2;
+                    case "Fácil": numDific = 0; break;
+                    case "Médio": numDific = 1; break;
+                    case "Difícil": numDific = 2; break;
+                    default: throw new RuntimeException("não deveria entrar aqui");
                 }
                 
                 p.defineAtaque(new Ataque("Sem ataque", 0));
@@ -33,7 +43,6 @@ public class JanelaPreJogo extends Janela {
                 new JanelaPrincipal(p, numDific).setVisible(true);
                 fechaJanela();
             }
-            
         });
     }
 

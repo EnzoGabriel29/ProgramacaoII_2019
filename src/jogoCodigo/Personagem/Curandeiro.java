@@ -3,6 +3,16 @@ package jogoCodigo.Personagem;
 import jogoCodigo.Ataque;
 import jogoCodigo.Atributos;
 
+/**
+ * Fornece a classe de jogo Curandeiro.
+ * A cada ataque, é adicionado 10% do valor da vida do personagem.
+ * A cada vitória de batalha, é adicionado 3 pontos de HP e 1 ponto de força.
+ * A cada avanço de nível, é adicionado o triplo do valor do novo nível ao HP,
+ * além de 10 pontos de força e inteligência e 19 vezes o valor do novo nível
+ * ao HP máximo. Ao começar o jogo, o curandeiro começa com 20 pontos a mais
+ * de HP máximo em comparação às outras classes de personagens.
+ * @author Enzo
+ */
 public class Curandeiro extends Personagem {
     private static final Ataque ATK001 = new Ataque("Raio de energia", 20);
     private static final Ataque ATK002 = new Ataque("Espinhos mágicos", 30);

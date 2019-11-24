@@ -30,6 +30,7 @@ public class JanelaPrincipal extends Janela {
     private ArmaduraManager aManager;
     private Personagem personagem;
     private int[] barrasPocao = {0, 0};
+    private ListenerPasseio listenerPasseio;
     private DefaultTableModel tableModel;
     
     /**
@@ -201,7 +202,7 @@ public class JanelaPrincipal extends Janela {
             @Override
             public void morre(){
                 mostraCaixaDialogo(personagem.getApelido() + " morreu!");
-                tp.desativa();
+                tp.interrupt();
                 fechaJanela();
                 new JanelaInicial().setVisible(true);
             }
@@ -308,9 +309,7 @@ public class JanelaPrincipal extends Janela {
         this.aManager.add(checkBotas, barraBotas);
         for (int i = 0; i < 4; i++) aManager.set(i);
         
-        this.tp = new ThreadPasseio(p, this.nivelDificuldade);
-        this.tp.start();
-        this.tp.setListenerBatalha(new ListenerPasseio(){
+        this.listenerPasseio = new ListenerPasseio(){
             /**
              * A cada termino de batalha, em caso de vitória do personagem,
              * será adicionado 10 vezes a quantidade do seu nível atual à 
@@ -412,7 +411,9 @@ public class JanelaPrincipal extends Janela {
                 
                 } else atualizaLog(personagem.getApelido() + " encontrou um baú, porém não havia nada.");
             }
-        });
+        };
+        
+        this.tp = ThreadPasseio.getInstance(personagem, nivelDificuldade, listenerPasseio);
       
         /**
          * Alterna entre os modos de passeio (externo) e casa (interno).
@@ -430,12 +431,17 @@ public class JanelaPrincipal extends Janela {
                 if (btnPassear.getText().equals("Dar um passeio")){
                     btnComerciante.setEnabled(false);
                     btnAlquimista.setEnabled(false);
-                    tp.ativa();
+                    
+                    if (!ThreadPasseio.isInstance())
+                        tp = ThreadPasseio.getInstance(personagem, nivelDificuldade, listenerPasseio);
+                    
+                    tp.start();
+                    
                     atualizaLog(personagem.getApelido() + " está dando uma volta...");
                     btnPassear.setText("Voltar para casa");
 
                 } else {
-                    tp.desativa();
+                    tp.interrupt();
                     atualizaLog(personagem.getApelido() + " voltou para casa.");
                     btnPassear.setText("Dar um passeio");
                     btnComerciante.setEnabled(true);
@@ -478,14 +484,14 @@ public class JanelaPrincipal extends Janela {
                     case 2: {
                         Pocao p = personagem.mochila.getPocao(lin);
                         if (p == null) break;
-                        int pos = 0;
                         JProgressBar barra = null;
                         
                         if (p.getTipo() != EnumPocao.VIDA){
+                            int pos;
                             switch (p.getTipo()){
                                 case FORCA: pos = 0; barra = barraPocaoForca; break;
                                 case SAGACIDADE: pos = 1; barra = barraPocaoSagacidade; break;
-                                default: pos = 2;
+                                default: throw new RuntimeException("não deveria entrar aqui");
                             }
                             
                             if (barrasPocao[pos] > 0){
@@ -558,9 +564,6 @@ public class JanelaPrincipal extends Janela {
         
         this.barraPocaoSagacidade.setStringPainted(true);
         this.barraPocaoSagacidade.setString("Poção de sagacidade");
-        
-        this.barraPocaoProtecao.setStringPainted(true);
-        this.barraPocaoProtecao.setString("Poção de proteção");
     }
 
     @SuppressWarnings("unchecked")
@@ -627,7 +630,6 @@ public class JanelaPrincipal extends Janela {
         barraPocaoForca = new javax.swing.JProgressBar();
         barraPocaoSagacidade = new javax.swing.JProgressBar();
         barraHPInimigo = new javax.swing.JProgressBar();
-        barraPocaoProtecao = new javax.swing.JProgressBar();
         barraElmo = new javax.swing.JProgressBar();
         barraPeitoral = new javax.swing.JProgressBar();
         barraCalcas = new javax.swing.JProgressBar();
@@ -656,7 +658,7 @@ public class JanelaPrincipal extends Janela {
         ));
         jScrollPane3.setViewportView(jTable1);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         tabelaMochila.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -882,7 +884,6 @@ public class JanelaPrincipal extends Janela {
             .addComponent(barraPocaoSagacidade, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(barraPocaoForca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(barraHPInimigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(barraPocaoProtecao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jLabel2)
@@ -928,9 +929,7 @@ public class JanelaPrincipal extends Janela {
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(checkBotas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(barraBotas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(barraPocaoProtecao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addComponent(barraPocaoSagacidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(barraPocaoForca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -996,7 +995,6 @@ public class JanelaPrincipal extends Janela {
     private javax.swing.JProgressBar barraHPInimigo;
     private javax.swing.JProgressBar barraPeitoral;
     private javax.swing.JProgressBar barraPocaoForca;
-    private javax.swing.JProgressBar barraPocaoProtecao;
     private javax.swing.JProgressBar barraPocaoSagacidade;
     private javax.swing.JProgressBar barraXP;
     private javax.swing.JButton btnAlquimista;

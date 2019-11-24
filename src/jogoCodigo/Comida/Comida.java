@@ -1,5 +1,6 @@
 package jogoCodigo.Comida;
 
+import java.util.Random;
 import jogoCodigo.BancoDados.EnumComida;
 import jogoCodigo.Calculo.ColecaoAleatoria;
 import jogoCodigo.ItemEmpilhavel;
@@ -29,9 +30,21 @@ public class Comida extends ItemEmpilhavel {
            .adicionaItem(4, EnumComida.BANANA)
            .adicionaItem(3, EnumComida.CENOURA)
            .adicionaItem(2, EnumComida.ENSOPADO)
-           .adicionaItem(1, EnumComida.FRANGO);                        
+           .adicionaItem(1, EnumComida.FRANGO); 
         
-        return EnumComida.getComida(ca.retornaItem());
+        Comida comidaRet = EnumComida.getComida(ca.retornaItem());
+        
+        /**
+         * 25% de chance de ser adicionado um tempero amargo.
+         * 25% de chance de ser adicionado um tempero.
+         */
+        switch (new Random().nextInt(4)){
+            case 0: return comidaRet;
+            case 1: return comidaRet;
+            case 2: return new TemperoAmargo(comidaRet);
+            case 3: return new TemperoDoce(comidaRet);
+            default: throw new RuntimeException("não deveria entrar aqui");
+        }
     }
     
     /**

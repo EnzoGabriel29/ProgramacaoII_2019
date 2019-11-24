@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JProgressBar;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import jogoCodigo.Atributos;
 import jogoCodigo.BancoDados.EnumPocao;
@@ -83,7 +84,7 @@ public class JanelaAlquimista extends javax.swing.JFrame {
                 
                 for (int i = 0; i < 3; i++) manager.clearColumn(i);
                 setPocao(null);
-                ((DefaultTableModel) tabelaItens.getModel()).fireTableDataChanged();
+                ((AbstractTableModel) tabelaItens.getModel()).fireTableDataChanged();
                 barraItens.setValue(0);
             }
         }); 

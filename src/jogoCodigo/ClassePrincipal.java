@@ -8,10 +8,11 @@ import jogoInterface.JanelaPrincipal;
 /**
  * Classe principal do jogo.
  * Deverá ser executada para o jogo ser iniciado.
- * @author usuario
+ * @author Enzo
  */
 public class ClassePrincipal {
     public static boolean DEBUG = true;
+    
     public static void main(String[] args){
         if (DEBUG){
             Personagem p = new Mago("Enzo");
