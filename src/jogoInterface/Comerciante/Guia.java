@@ -1,4 +1,4 @@
-package jogoInterface;
+package jogoInterface.Comerciante;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,24 +8,23 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import jogoCodigo.Comida;
-import jogoCodigo.Personagem;
-import jogoCodigo.TipoComida;
+import jogoCodigo.Personagem.Personagem;
 
 abstract public class Guia<T> {
     protected final T[] itens;
     protected final String tituloGuia;
     protected final Personagem personagem;
     protected final JLabel labelPreco;
-    protected final JLabel labelDescricao;
+    protected final JTextArea labelDescricao;
     protected final JButton botaoComprar;
     protected final JList listaItens;
     protected final JSpinner spinnerQtd;
     
     public Guia(Personagem p, T[] itens, String titulo, JLabel lblPreco,
-            JLabel lblDesc, JButton btnComprar, JList lstItens, JSpinner spnQtd){
+            JTextArea lblDesc, JButton btnComprar, JList lstItens, JSpinner spnQtd){
         
         this.personagem = p;
         this.itens = itens;
@@ -37,11 +36,11 @@ abstract public class Guia<T> {
         this.spinnerQtd = spnQtd;
     }
     
-    abstract protected void setItem(String nome);
-    abstract protected T getItem(String nome);
-    abstract protected int getPrecoAtual();
-    abstract protected void onItemComprado(T item);
-    abstract protected void setDescricao(String nome);
+    abstract protected void setItem(T item);
+    abstract protected int getPreco(T item);
+    abstract protected void setDescricao(T item);
+    abstract protected void onItemComprado(T item, int qtd);
+    abstract protected void atualizaBotaoComprar(T item, int qtd);
     
     public void configuraElementos(){
         this.setPreco(0);
@@ -53,43 +52,38 @@ abstract public class Guia<T> {
         listaItens.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
-                String item = listaItens.getSelectedValue().toString();
+                T item = (T) listaItens.getSelectedValue();
                 setItem(item);
                 
                 int qtd = (int) spinnerQtd.getValue();
-                int preco = getPrecoAtual();
+                int preco = getPreco(item);
                 int valorTotal = qtd * preco;
                 
                 setPreco(valorTotal);
-                
-                if (valorTotal > personagem.mochila.getCarteira())
-                    botaoComprar.setEnabled(false);
-                
-                else botaoComprar.setEnabled(true);
+                atualizaBotaoComprar(item, qtd);
             }
         });
         
         spinnerQtd.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(ChangeEvent e){
+                T item = (T) listaItens.getSelectedValue();
                 int qtd = (int) spinnerQtd.getValue();
-                int preco = getPrecoAtual();
+                int preco = getPreco(item);
                 int valorTotal = qtd * preco;
                 
                 setPreco(valorTotal);
-                
-                if (valorTotal > personagem.mochila.getCarteira())
-                    botaoComprar.setEnabled(false);
-                
-                else botaoComprar.setEnabled(true);
+                atualizaBotaoComprar(item, qtd);
             }
         });
         
         botaoComprar.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){                
-                T item = (T)(listaItens.getSelectedValue());
-                onItemComprado(item);
+                T item = (T) listaItens.getSelectedValue();
+                int qtd = (int) spinnerQtd.getValue();
+                
+                onItemComprado(item, qtd);
             }
         });
     }

@@ -1,12 +1,15 @@
-package jogoCodigo;
+package jogoCodigo.Personagem;
+
+import jogoCodigo.Ataque;
+import jogoCodigo.Atributos;
 
 public class Mago extends Personagem {
-    public static final Ataque ATK001 = new Ataque("Raio de energia", 20);
-    public static final Ataque ATK002 = new Ataque("Espinhos mágicos", 30);
-    public static final Ataque ATK004 = new Ataque("Rajada de fogo", 40);
-    public static final Ataque ATK008 = new Ataque("Trovão incandescente", 50);
-    public static final Ataque ATK016 = new Ataque("Explosão mística", 60);
-    public static final Ataque ATK032 = new Ataque("Sopro do dragão", 70);
+    private static final Ataque ATK001 = new Ataque("Raio de energia", 20);
+    private static final Ataque ATK002 = new Ataque("Espinhos mágicos", 30);
+    private static final Ataque ATK004 = new Ataque("Rajada de fogo", 40);
+    private static final Ataque ATK008 = new Ataque("Trovão incandescente", 50);
+    private static final Ataque ATK016 = new Ataque("Explosão mística", 60);
+    private static final Ataque ATK032 = new Ataque("Sopro do dragão", 70);
     
     public Mago(String apelido) {
         super(apelido);
@@ -19,9 +22,9 @@ public class Mago extends Personagem {
         
         this.atualizaAtributos(new Atributos(){
             @Override public int getHP(){ return 0; }
-            @Override public int getMaxHP(){ return Mago.this.nivel*19; }
+            @Override public int getMaxHP(){ return nivel*19; }
             @Override public int getForca(){ return 10; }
-            @Override public int getInteligencia(){ return Mago.this.nivel*3; }
+            @Override public int getInteligencia(){ return nivel*3; }
         });
         
         switch (this.nivel){
@@ -43,15 +46,15 @@ public class Mago extends Personagem {
             @Override public int getHP(){ return 0; }
             @Override public int getMaxHP(){ return 0; }
             @Override public int getForca(){ return this.forca + 1; }
-            @Override public int getInteligencia(){ return this. inteligencia + 1; }
+            @Override public int getInteligencia(){ return this.inteligencia + 3; }
         });
     }
 
     @Override
     public void ataque(Personagem p, Ataque a){
         int danoAtaque = a == null ? 0 : a.getDano();
-        p.diminuiHP(this.forca + danoAtaque);
+        danoAtaque += this.getInteligencia() / 10;
+        p.diminuiHP(this.getForca() + danoAtaque);
         listener.ataca(a, p);
     }
-    
 }

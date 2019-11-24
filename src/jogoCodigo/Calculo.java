@@ -6,7 +6,12 @@ import java.util.TreeMap;
 
 public class Calculo {
     
-    // https://stackoverflow.com/questions/6409652
+    /**
+     * Define seleção de itens aleatória, onde cada
+     * item possui uma probabilidade de aparecer.
+     * Fonte: https://stackoverflow.com/questions/6409652
+     * @param <E> tipo do item a ser escolhido.
+     */
     public static class ColecaoAleatoria<E> {
         private final NavigableMap<Double, E> map = new TreeMap<>();
         private final Random random;
@@ -20,14 +25,24 @@ public class Calculo {
             this.random = random;
         }
 
-        public ColecaoAleatoria<E> add(double peso, E valor){
+        /**
+         * Adiciona um item com seu respectivo peso.
+         * @param peso peso do item a ser adicionado.
+         * @param item item a ser adicionado.
+         * @return instância de ColecaoAleatoria.
+         */
+        public ColecaoAleatoria<E> adicionaItem(double peso, E item){
             if (peso <= 0) return this;
             total += peso;
-            map.put(total, valor);
+            map.put(total, item);
             return this;
         }
 
-        public E retornaValor() {
+        /**
+         * Retorna um item com a probabilidade do seu peso.
+         * @return o item escolhido.
+         */
+        public E retornaItem(){
             double valor = random.nextDouble() * total;
             return map.higherEntry(valor).getValue();
         }

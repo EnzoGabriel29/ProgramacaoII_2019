@@ -1,5 +1,10 @@
 package jogoCodigo;
 
+/**
+ * Providencia atributos.
+ * É uma classe base tanto para personagens quanto para itens.
+ * @author Enzo
+ */
 abstract public class Atributos {
     protected int hp;
     protected int forca;

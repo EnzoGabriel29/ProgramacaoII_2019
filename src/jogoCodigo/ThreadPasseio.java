@@ -1,5 +1,10 @@
 package jogoCodigo;
 
+import jogoCodigo.Comida.Comida;
+import jogoCodigo.Pocao.Pocao;
+import jogoCodigo.Personagem.Personagem;
+import jogoCodigo.Personagem.Inimigo;
+import jogoCodigo.Listener.ListenerPasseio;
 import java.util.Random;
 import jogoCodigo.Calculo.ColecaoAleatoria;
 
@@ -12,12 +17,14 @@ public class ThreadPasseio extends Thread {
     private static final int ITEM = 5;
     
     private final Personagem personagem;
-    private BattleActionListener listenerBatalha;
+    private final int nivelDific;
+    private ListenerPasseio listenerBatalha;
     private boolean isPasseio = false;
     private Ataque ataqueAtual;
     
-    public ThreadPasseio(Personagem p){
+    public ThreadPasseio(Personagem p, int dificuldade){
         this.personagem = p;
+        this.nivelDific = dificuldade;
     }
     
     public static void aguarda(int valor){
@@ -43,23 +50,17 @@ public class ThreadPasseio extends Thread {
                 aguarda(tempoEspera);
 
                 ColecaoAleatoria<Integer> rca = new ColecaoAleatoria<>();
-                rca.add(75, ACAO_BAU).add(25, ACAO_INIMIGO);
-                int acao = rca.retornaValor();
+                rca.adicionaItem(75, ACAO_BAU).adicionaItem(25, ACAO_INIMIGO);
+                int acao = rca.retornaItem();
                 
                 switch (acao){
                     case ACAO_BAU: {
                         ColecaoAleatoria<Integer> rci = new ColecaoAleatoria<>();
-                        rci.add(10, ITEM_COMIDA).add(7, ITEM_POCAO)
-                                .add(7, ITEM_MOEDA).add(3, ITEM);                        
-                        int objeto = rci.retornaValor();
+                        rci.adicionaItem(10, ITEM_COMIDA).adicionaItem(7, ITEM_POCAO)
+                                .adicionaItem(7, ITEM_MOEDA).adicionaItem(3, ITEM);                        
+                        int objeto = rci.retornaItem();
                         
-                        switch (objeto){
-                            case ITEM: {
-                                System.out.println("item");
-                                listenerBatalha.encontraBau();
-                                break;
-                            }
-                            
+                        switch (objeto){  
                             case ITEM_COMIDA: {                             
                                 Comida c = Comida.retornaComida();
                                 listenerBatalha.encontraBau(c);
@@ -67,7 +68,8 @@ public class ThreadPasseio extends Thread {
                             }
                             
                             case ITEM_POCAO: {
-                                Pocao p = Pocao.retornaPocao();
+                                String classe = personagem.getClass().getSimpleName();
+                                Pocao p = Pocao.retornaPocao(classe);
                                 listenerBatalha.encontraBau(p);
                                 break;
                             }
@@ -83,14 +85,15 @@ public class ThreadPasseio extends Thread {
                     }
 
                     case ACAO_INIMIGO: { 
-                        Inimigo in = Inimigo.retornaInimigo(personagem.getNivel());
+                        Inimigo in = Inimigo
+                                .retornaInimigo(personagem.getNivel(), nivelDific);
                         boolean batalhaConcluida = this.iniciaBatalha(in);
                         
                         if (batalhaConcluida)
-                            listenerBatalha.terminaBatalha();
+                            listenerBatalha.terminaBatalha(in);
                         
                         else listenerBatalha.jogadorFugiu();
-                        
+                                                
                         isPasseio = batalhaConcluida;
                     }
                 }
@@ -117,23 +120,12 @@ public class ThreadPasseio extends Thread {
         }
                 
         if (personagem.getHP() > 0)
-            this.personagem.aumentaXP(this.personagem.nivel*10);
+            this.personagem.aumentaXP(this.personagem.getNivel()*10);
         
         return true;
     }
     
-    public void setListenerBatalha(BattleActionListener l) {
+    public void setListenerBatalha(ListenerPasseio l) {
         this.listenerBatalha = l;
-    }
-    
-    public static interface BattleActionListener {
-        public void terminaBatalha();
-        public void terminaRodada(Personagem in);
-        public void inimigoEncontrado(Personagem in);
-        public void jogadorFugiu();
-        public void encontraBau();
-        public void encontraBau(Comida c);
-        public void encontraBau(Pocao p);
-        public void encontraBau(int moedas);
     }
 }
