@@ -63,8 +63,12 @@ public class Mago extends Personagem {
     @Override
     public void ataque(Personagem p, Ataque a){
         int danoAtaque = a == null ? 0 : a.getDano();
+        danoAtaque += this.getForca();
         danoAtaque += this.getInteligencia() / 10;
-        p.diminuiHP(this.getForca() + danoAtaque);
-        listener.ataca(a, p);
+        
+        String nomeAtaque = a == null ? "Sem ataque" : a.getNome();
+        
+        p.diminuiHP(danoAtaque);
+        listener.ataca(p, nomeAtaque, danoAtaque);
     }
 }

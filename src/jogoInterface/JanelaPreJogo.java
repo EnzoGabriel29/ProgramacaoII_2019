@@ -10,6 +10,27 @@ import jogoCodigo.Personagem.Personagem;
 
 public class JanelaPreJogo extends Janela {
 
+    public static String capitalize(String string){
+        String strRet = "";
+        
+        if (string.contains(" ")){
+            String[] strings = string.split(" ");
+            for (String s: strings){
+                strRet += capitalize(s);
+                strRet += " ";
+            }
+            
+            return strRet;
+        }
+            
+        strRet += Character.toUpperCase(string.charAt(0));
+        char[] chars = string.toCharArray();
+        for (int i = 1; i < chars.length; i++)
+            strRet += Character.toLowerCase(chars[i]);
+
+        return strRet;
+    }
+    
     public JanelaPreJogo(){
         super();
         initComponents();
@@ -18,7 +39,7 @@ public class JanelaPreJogo extends Janela {
         btnJogar.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                String nome = campoNome.getText();
+                String nome = capitalize(campoNome.getText());
                 String classe = (String) comboClasse.getSelectedItem();
                 String dific = (String) comboDificuldade.getSelectedItem();
                 

@@ -1,6 +1,5 @@
 package jogoCodigo.Listener;
 
-import jogoCodigo.Ataque;
 import jogoCodigo.Personagem.Personagem;
 import jogoCodigo.Pocao.Pocao;
 
@@ -23,5 +22,5 @@ public interface ListenerAtributos {
     public void atualizaAtributos();
     public void atualizaArmaduras();
     public void utilizaPocao(Pocao p);
-    public void ataca(Ataque a, Personagem i);
+    public void ataca(Personagem i, String ataque, int dano);
 }

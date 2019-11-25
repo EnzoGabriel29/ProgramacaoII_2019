@@ -30,7 +30,7 @@ public class Inimigo extends Personagem {
                 .adicionaItem(1, EnumInimigo.BRUXA)
                 .adicionaItem(1, EnumInimigo.VAMPIRO);
         
-        int inimigoNivel = nivel == 1 ? 1 : nivel * 2;
+        int inimigoNivel = nivel == 1 ? 1 : 2 * nivel + 1;
         inimigoNivel += dific;
         
         switch (ca.retornaItem()){

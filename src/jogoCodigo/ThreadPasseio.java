@@ -173,6 +173,8 @@ public class ThreadPasseio extends Thread {
                 
         if (personagem.getHP() > 0)
             this.personagem.aumentaXP(this.personagem.getNivel()*10);
+        else
+            this.personagem.morre();
         
         return true;
     }

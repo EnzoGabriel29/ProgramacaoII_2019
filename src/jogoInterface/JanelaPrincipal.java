@@ -1,15 +1,21 @@
 package jogoInterface;
 
-import jogoInterface.Comerciante.JanelaComerciante;
 import jogoInterface.Alquimista.JanelaAlquimista;
+import jogoInterface.Comerciante.JanelaComerciante;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.List;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.table.DefaultTableModel;
 import jogoCodigo.Ataque;
@@ -32,6 +38,7 @@ public class JanelaPrincipal extends Janela {
     private int[] barrasPocao = {0, 0};
     private ListenerPasseio listenerPasseio;
     private DefaultTableModel tableModel;
+    private boolean isPersonagemMorto = false;
     
     /**
      * Atualiza a área de texto com o registro
@@ -198,13 +205,29 @@ public class JanelaPrincipal extends Janela {
         comboAtaques.addItem("Sem ataque");
         comboAtaques.setSelectedIndex(0);
         
+        this.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (isPersonagemMorto){
+                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    
+                } else {
+                    int opcao = JOptionPane.showConfirmDialog(null,"Você "
+                            + "deseja sair do jogo? Todo o seu progresso será "
+                            + "perdido!", "Confirmar saída", JOptionPane.YES_NO_OPTION);
+                    
+                    if (opcao == JOptionPane.YES_OPTION)
+                        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                }
+            }
+        });
+        
         this.personagem.setListener(new ListenerAtributos(){
             @Override
             public void morre(){
-                mostraCaixaDialogo(personagem.getApelido() + " morreu!");
-                tp.interrupt();
-                fechaJanela();
-                new JanelaInicial().setVisible(true);
+                isPersonagemMorto = true;
+                JOptionPane.showMessageDialog(JanelaPrincipal.this, personagem.getApelido() + " morreu!");
+                dispatchEvent(new WindowEvent(JanelaPrincipal.this, WindowEvent.WINDOW_CLOSING));
             }
             
             @Override
@@ -234,11 +257,10 @@ public class JanelaPrincipal extends Janela {
             }
             
             @Override
-            public void ataca(Ataque a, Personagem in){
+            public void ataca(Personagem i, String nome, int dano){
                 atualizaLog(personagem.getApelido() + " utilizou "
-                        + a.getNome() + " e causou um dano de " +
-                        (personagem.getForca() + a.getDano()) +
-                        " HP em " + in.getApelido() + "!");
+                        + nome + " e causou um dano de " +
+                        dano + " HP em " + i.getApelido() + "!");
             }
 
             @Override
@@ -293,9 +315,7 @@ public class JanelaPrincipal extends Janela {
         });
         
         this.labelNivel.setText(String.valueOf(this.personagem.getNivel()));
-        
-        this.personagem.mochila.adicionaCarteira(10000);
-        
+                
         this.setAtaques(personagem.mochila.getAtaques());
         this.setComidas(personagem.mochila.getComidas());
         this.setAtributos(personagem);
@@ -658,7 +678,7 @@ public class JanelaPrincipal extends Janela {
         ));
         jScrollPane3.setViewportView(jTable1);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         tabelaMochila.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

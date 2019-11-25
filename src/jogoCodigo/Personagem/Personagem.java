@@ -44,18 +44,18 @@ abstract public class Personagem extends Atributos {
         this.listener = new ListenerAtributos(){
             @Override public void morre(){}
             @Override public void alteraHP(){}
-            @Override public void atualizaItens(){}
             @Override public void alteraXP(){}
+            @Override public void alteraFome(){}
             @Override public void alteraNivel(){}
             @Override public void alteraMaxHP(){}
-            @Override public void alteraFome(){}
-            @Override public void ataca(Ataque a, Personagem in){}
+            @Override public void atualizaItens(){}
+            @Override public void atualizaPocoes(){}
             @Override public void atualizaComidas(){}
             @Override public void atualizaAtaques(){}
-            @Override public void atualizaPocoes(){}
             @Override public void atualizaAtributos(){}
             @Override public void atualizaArmaduras(){}
             @Override public void utilizaPocao(Pocao p){}
+            @Override public void ataca(Personagem i, String a, int d){}
         };
         
         this.mochila = new Mochila(this);
