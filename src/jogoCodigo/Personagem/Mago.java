@@ -14,12 +14,18 @@ import jogoCodigo.Atributos;
  * @author Enzo
  */
 public class Mago extends Personagem {
-    private static final Ataque ATK001 = new Ataque("Raio de energia", 20);
-    private static final Ataque ATK002 = new Ataque("Espinhos mágicos", 30);
-    private static final Ataque ATK004 = new Ataque("Rajada de fogo", 40);
-    private static final Ataque ATK008 = new Ataque("Trovão incandescente", 50);
-    private static final Ataque ATK016 = new Ataque("Explosão mística", 60);
-    private static final Ataque ATK032 = new Ataque("Sopro do dragão", 70);
+    private static Ataque retornaAtaque(int nivel){
+        switch (nivel){
+            case 2: return new Ataque("Raio de energia", 20);
+            case 4: return new Ataque("Espinhos mágicos", 30);
+            case 8: return new Ataque("Rajada de fogo", 40);
+            case 16: return new Ataque("Trovão incandescente", 50);
+            case 32: return new Ataque("Explosão mística", 60);
+            case 64: return new Ataque("Sopro do dragão", 70);
+        }
+        
+        return null;
+    }
     
     public Mago(String apelido) {
         super(apelido);
@@ -37,15 +43,9 @@ public class Mago extends Personagem {
             @Override public int getInteligencia(){ return nivel*3; }
         });
         
-        switch (this.nivel){
-            case 1: this.mochila.adicionaAtaque(ATK001); break;
-            case 2: this.mochila.adicionaAtaque(ATK002); break;
-            case 4: this.mochila.adicionaAtaque(ATK004); break;
-            case 8: this.mochila.adicionaAtaque(ATK008); break;
-            case 16: this.mochila.adicionaAtaque(ATK016); break;
-            case 32: this.mochila.adicionaAtaque(ATK032); break;
-        }
-        
+        Ataque a = Mago.retornaAtaque(this.nivel);
+        if (a != null) this.mochila.adicionaAtaque(a);
+                
         if (this.maxHP > this.nivel*100)
             this.maxHP = this.nivel*100;
     }

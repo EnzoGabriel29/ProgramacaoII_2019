@@ -28,6 +28,11 @@ import jogoCodigo.Personagem.Personagem;
 import jogoCodigo.Pocao.Pocao;
 import jogoCodigo.ThreadPasseio;
 
+/**
+ * Fornece uma interface gráfica para o usuário controlar
+ * as ações do personagem, como usar itens e ir em passeios.
+ * @author Enzo
+ */
 public class JanelaPrincipal extends Janela {
     public ThreadPasseio tp;
     private int nivelDificuldade;
@@ -154,8 +159,8 @@ public class JanelaPrincipal extends Janela {
      * @param p poção a ser utilizada.
      * @param barra barra a ser alterada na interface.
      * @param pos posição da poção a ser utilizada. Definir informações
-     *            para poção de proteção, força e sagacidade equivalem
-     *            às posições 0, 1 e 2, respectivamente.
+     *            para poção de força e sagacidade equivalem às posições
+     *            0 e 1, respectivamente.
      */
     private void setBarraPocao(final Pocao p, final JProgressBar barra, final int pos){  
         barrasPocao[pos] = 60;
