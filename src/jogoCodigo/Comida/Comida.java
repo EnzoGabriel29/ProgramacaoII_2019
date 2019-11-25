@@ -36,7 +36,7 @@ public class Comida extends ItemEmpilhavel {
         
         /**
          * 25% de chance de ser adicionado um tempero amargo.
-         * 25% de chance de ser adicionado um tempero.
+         * 25% de chance de ser adicionado um tempero doce.
          */
         switch (new Random().nextInt(4)){
             case 0: return comidaRet;

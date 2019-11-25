@@ -7,6 +7,7 @@ import jogoCodigo.Armadura;
 import jogoCodigo.Ataque;
 import jogoCodigo.Atributos;
 import jogoCodigo.Comida.Comida;
+import jogoCodigo.Comida.DecoratorComida;
 import jogoCodigo.Mochila;
 import jogoCodigo.Pocao.Pocao;
 
@@ -54,6 +55,7 @@ abstract public class Personagem extends Atributos {
             @Override public void atualizaAtaques(){}
             @Override public void atualizaAtributos(){}
             @Override public void atualizaArmaduras(){}
+            @Override public void encontraDecorator(Comida c){}
             @Override public void ataca(Personagem i, String a, int d){}
         };
         
@@ -222,7 +224,7 @@ abstract public class Personagem extends Atributos {
      */
     public void aumentaFome(int valor){
         this.fome += valor;
-        if (this.fome > 100) this.fome = 100;
+        if (this.fome > 100) this.morre();
         listener.alteraFome();
     }
     
@@ -232,7 +234,7 @@ abstract public class Personagem extends Atributos {
      */
     public void diminuiFome(int valor){
         this.fome -= valor;
-        if (this.fome < 0) this.morre();
+        if (this.fome < 0) this.fome = 0;
         listener.alteraFome();
     }
         
@@ -269,7 +271,10 @@ abstract public class Personagem extends Atributos {
         if (fomeRest > 0)
             this.diminuiFome(fomeRest);
         else
-            this.aumentaFome(fomeRest);
+            this.aumentaFome(-fomeRest);
+        
+        if (c instanceof DecoratorComida)
+            listener.encontraDecorator(c);
     }
     
     /**

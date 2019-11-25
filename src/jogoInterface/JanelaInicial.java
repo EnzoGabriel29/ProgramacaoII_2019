@@ -48,7 +48,7 @@ public class JanelaInicial extends Janela {
 
         jLabel1.setFont(new java.awt.Font("Century Schoolbook L", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("RPG");
+        jLabel1.setText("Tradeland");
 
         btnIniciar.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         btnIniciar.setText("Iniciar");

@@ -1,5 +1,6 @@
 package jogoCodigo.Listener;
 
+import jogoCodigo.Comida.Comida;
 import jogoCodigo.Personagem.Personagem;
 
 /**
@@ -20,5 +21,6 @@ public interface ListenerAtributos {
     public void atualizaAtaques();
     public void atualizaAtributos();
     public void atualizaArmaduras();
+    public void encontraDecorator(Comida c);
     public void ataca(Personagem i, String ataque, int dano);
 }

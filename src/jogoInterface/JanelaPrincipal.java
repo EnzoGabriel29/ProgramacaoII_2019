@@ -199,7 +199,7 @@ public class JanelaPrincipal extends Janela {
     public JanelaPrincipal(Personagem p, int d){
         super();
         initComponents();
-        this.setTitle("Painel de controle");
+        this.setTitle("Tradeland");
         this.tableModel = (DefaultTableModel) this.tabelaMochila.getModel();
         
         this.personagem = p;
@@ -291,6 +291,17 @@ public class JanelaPrincipal extends Janela {
                 setAtributos(personagem);
             }
 
+            @Override
+            public void encontraDecorator(Comida c) {
+                if (c.getFomeRest() > 0)
+                    atualizaLog("Ao consumir " + c.getNome() + ", " +
+                    "você encontrou um tempero que diminui o dobro da fome.");
+                
+                else
+                    atualizaLog("Ao consumir " + c.getNome() + ", " +
+                    "você encontrou um tempero que aumenta o dobro da fome.");
+            }
+            
             @Override
             public void atualizaArmaduras(){
                 for (int i = 0; i < 4; i++){
@@ -478,9 +489,11 @@ public class JanelaPrincipal extends Janela {
                         Comida c = personagem.mochila.getComida(lin);
                         
                         if (c != null){
+                            int fomeRest = c.getFomeRest();
+                            String acao = fomeRest > 0 ? "diminuiu" : "aumentou";
                             atualizaLog(personagem.getApelido() + " comeu " +
-                                    c.getNome() + " e diminuiu " +
-                                    c.getFomeRest() + " pontos de fome.");
+                                    c.getNome() + " e " + acao + " " +
+                                    Math.abs(c.getFomeRest()) + " pontos de fome.");
                             
                             personagem.mochila.removeComida(lin);
                             personagem.come(c);
