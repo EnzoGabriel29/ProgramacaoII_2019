@@ -54,7 +54,6 @@ abstract public class Personagem extends Atributos {
             @Override public void atualizaAtaques(){}
             @Override public void atualizaAtributos(){}
             @Override public void atualizaArmaduras(){}
-            @Override public void utilizaPocao(Pocao p){}
             @Override public void ataca(Personagem i, String a, int d){}
         };
         
@@ -279,7 +278,6 @@ abstract public class Personagem extends Atributos {
      */
     public void bebe(Pocao p){
         this.atualizaAtributos(p.getAtributos());
-        this.listener.utilizaPocao(p);
     }
     
     /**

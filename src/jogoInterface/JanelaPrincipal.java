@@ -12,8 +12,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -287,21 +285,6 @@ public class JanelaPrincipal extends Janela {
             public void atualizaAtributos(){
                 setAtributos(personagem);
             }
-            
-            @Override
-            public void utilizaPocao(Pocao p){
-                int pos;
-                JProgressBar barra;
-                
-                switch (p.getTipo()){
-                    case FORCA: pos = 0; barra = barraPocaoForca; break;
-                    case SAGACIDADE: pos = 1; barra = barraPocaoSagacidade; break;
-                    default: return;
-                }
-                
-                if (barrasPocao[pos] == 0) setBarraPocao(p, barra, pos);
-                else atualizaLog("Uma poção desse tipo já esta em uso!");
-            }
 
             @Override
             public void atualizaArmaduras(){
@@ -521,8 +504,7 @@ public class JanelaPrincipal extends Janela {
                             } else setBarraPocao(p, barra, pos);
                         }
                         
-                        atualizaLog(personagem.getApelido() +
-                                " consumiu a poção " + p.getNome() + "!");     
+                        atualizaLog(personagem.getApelido() + " consumiu a poção " + p.getNome() + "!");     
                         personagem.mochila.removePocao(lin);
                         personagem.bebe(p);
                         

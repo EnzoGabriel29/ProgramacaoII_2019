@@ -110,10 +110,8 @@ public class TableColumn {
         
         for (int i = 0; i < this.numItens; i++){
             item = this.get(i);
-            if (nome.equals(item.getNome())){
-                System.out.println(item.getNome());
+            if (nome.equals(item.getNome()))
                 return item;
-            } 
         }
         
         throw new IllegalArgumentException();

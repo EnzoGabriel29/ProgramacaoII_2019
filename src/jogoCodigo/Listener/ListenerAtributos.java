@@ -1,7 +1,6 @@
 package jogoCodigo.Listener;
 
 import jogoCodigo.Personagem.Personagem;
-import jogoCodigo.Pocao.Pocao;
 
 /**
  * Providencia um listener utilizado para atualizar os
@@ -21,6 +20,5 @@ public interface ListenerAtributos {
     public void atualizaAtaques();
     public void atualizaAtributos();
     public void atualizaArmaduras();
-    public void utilizaPocao(Pocao p);
     public void ataca(Personagem i, String ataque, int dano);
 }
