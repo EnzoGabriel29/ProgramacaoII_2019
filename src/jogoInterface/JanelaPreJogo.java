@@ -36,7 +36,7 @@ public class JanelaPreJogo extends Janela {
         this.setTitle("Configurações");
         
         btnJogar.addActionListener((ActionEvent e) -> {
-            String nome = capitalize(campoNome.getText());
+            String nome = capitalize(campoNome.getText().strip());
             String classe = (String) comboClasse.getSelectedItem();
             String dific = (String) comboDificuldade.getSelectedItem();
             
