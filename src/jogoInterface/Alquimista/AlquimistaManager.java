@@ -1,12 +1,11 @@
 package jogoInterface.Alquimista;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JProgressBar;
-import jogoCodigo.ItemConstruivel;
+import jogoCodigo.Item.ItemConstruivel;
 
 /**
  * Gerencia as trocas realizadas na JFrame JanelaAlquimista.
@@ -49,18 +48,15 @@ public class AlquimistaManager {
         this.buttons.add(b);
         this.tableCols.add(t);
         
-        b.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                if (t.column == 0 && numItensAdded[0] == 1) return;
-                if (t.column == 1 && numItensAdded[1] == 2) return;
-                if (t.column == 2 && numItensAdded[2] == 4) return;
-                
-                int pos = c.comboBox.getSelectedIndex();
-                if (pos < 0) return;
-                
-                moveToAlquimista(t.column, pos, 1);
-            }
+        b.addActionListener((ActionEvent e) -> {
+            if (t.column == 0 && numItensAdded[0] == 1) return;
+            if (t.column == 1 && numItensAdded[1] == 2) return;
+            if (t.column == 2 && numItensAdded[2] == 4) return;
+            
+            int pos = c.comboBox.getSelectedIndex();
+            if (pos < 0) return;
+            
+            moveToAlquimista(t.column, pos, 1);
         });
     }
     

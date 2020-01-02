@@ -1,5 +1,6 @@
 package jogoCodigo;
 
+import jogoCodigo.Item.ItemConstruivel;
 import jogoCodigo.Comida.Comida;
 import jogoCodigo.Pocao.Pocao;
 import jogoCodigo.Personagem.Personagem;

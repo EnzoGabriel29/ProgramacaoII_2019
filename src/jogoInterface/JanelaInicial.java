@@ -11,27 +11,18 @@ public class JanelaInicial extends Janela {
         super();
         initComponents();
         
-        btnIniciar.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                new JanelaPreJogo().setVisible(true);
-                fechaJanela();
-            }
+        btnIniciar.addActionListener((ActionEvent e) -> {
+            new JanelaPreJogo().setVisible(true);
+            fechaJanela();
         });
         
-        btnSobre.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                JOptionPane.showMessageDialog(JanelaInicial.this, "Trabalho final da " +
-                        "disciplina de Programação II. Feito por Enzo Gabriel.");
-            }
+        btnSobre.addActionListener((ActionEvent e) -> {
+            JOptionPane.showMessageDialog(JanelaInicial.this, "Trabalho final da " +
+                    "disciplina de Programação II. Feito por Enzo Santos.");
         });
         
-        btnSair.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                dispatchEvent(new WindowEvent(JanelaInicial.this, WindowEvent.WINDOW_CLOSING));
-            }
+        btnSair.addActionListener((ActionEvent e) -> {
+            dispatchEvent(new WindowEvent(JanelaInicial.this, WindowEvent.WINDOW_CLOSING));
         });
     }
 

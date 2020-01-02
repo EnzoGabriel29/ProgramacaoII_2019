@@ -2,7 +2,7 @@ package jogoCodigo.BancoDados;
 
 import java.util.List;
 import java.util.LinkedList;
-import jogoCodigo.ItemConstruivel;
+import jogoCodigo.Item.ItemConstruivel;
 
 /**
  * Providencia um banco de dados para os itens classe A do jogo.

@@ -65,14 +65,9 @@ abstract public class Personagem extends Atributos {
          * Thread que monitora a fome do personagem, aumentando 5 pontos de
          * fome a cada minuto.
          */
-        Executors.newScheduledThreadPool(1).scheduleWithFixedDelay(
-            new Runnable(){
-                @Override
-                public void run(){
-                    aumentaFome(5);
-                }
-            },  
-        60L, 60L, TimeUnit.SECONDS);
+        Executors.newScheduledThreadPool(1)
+                .scheduleWithFixedDelay(() -> aumentaFome(5),
+                        60L, 60L, TimeUnit.SECONDS);
     }
     
     public Personagem() {

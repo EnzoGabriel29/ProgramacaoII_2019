@@ -4,7 +4,7 @@ import java.util.Random;
 import jogoCodigo.Atributos;
 import jogoCodigo.BancoDados.EnumPocao;
 import jogoCodigo.Calculo.ColecaoAleatoria;
-import jogoCodigo.ItemEmpilhavel;
+import jogoCodigo.Item.ItemEmpilhavel;
 
 /**
  * Providencia funções de poção no jogo. Cada personagem possui um atributo,

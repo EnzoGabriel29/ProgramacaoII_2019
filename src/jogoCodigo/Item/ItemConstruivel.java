@@ -1,4 +1,4 @@
-package jogoCodigo;
+package jogoCodigo.Item;
 
 import jogoCodigo.Personagem.Inimigo;
 import jogoCodigo.BancoDados.EnumClasseA;

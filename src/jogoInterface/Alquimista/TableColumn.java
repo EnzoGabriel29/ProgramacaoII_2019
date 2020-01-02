@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import jogoCodigo.ItemConstruivel;
+import jogoCodigo.Item.ItemConstruivel;
 
 /**
  * Fornece métodos para manipular a coluna de uma JTable.

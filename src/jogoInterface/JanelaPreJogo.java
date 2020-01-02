@@ -1,7 +1,6 @@
 package jogoInterface;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import jogoCodigo.Ataque;
 import jogoCodigo.Personagem.Curandeiro;
 import jogoCodigo.Personagem.Gladiador;
@@ -36,34 +35,31 @@ public class JanelaPreJogo extends Janela {
         initComponents();
         this.setTitle("Configurações");
         
-        btnJogar.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                String nome = capitalize(campoNome.getText());
-                String classe = (String) comboClasse.getSelectedItem();
-                String dific = (String) comboDificuldade.getSelectedItem();
-                
-                Personagem p;
-                switch (classe){
-                    case "Mago": p = new Mago(nome); break;
-                    case "Gladiador": p = new Gladiador(nome); break;
-                    case "Curandeiro": p = new Curandeiro(nome); break;
-                    default: throw new RuntimeException("não deveria entrar aqui");
-                }
-                
-                int numDific;
-                switch (dific){
-                    case "Fácil": numDific = 0; break;
-                    case "Médio": numDific = 1; break;
-                    case "Difícil": numDific = 2; break;
-                    default: throw new RuntimeException("não deveria entrar aqui");
-                }
-                
-                p.defineAtaque(new Ataque("Sem ataque", 0));
-                
-                new JanelaPrincipal(p, numDific).setVisible(true);
-                fechaJanela();
+        btnJogar.addActionListener((ActionEvent e) -> {
+            String nome = capitalize(campoNome.getText());
+            String classe = (String) comboClasse.getSelectedItem();
+            String dific = (String) comboDificuldade.getSelectedItem();
+            
+            Personagem p;
+            switch (classe){
+                case "Mago": p = new Mago(nome); break;
+                case "Gladiador": p = new Gladiador(nome); break;
+                case "Curandeiro": p = new Curandeiro(nome); break;
+                default: throw new RuntimeException("não deveria entrar aqui");
             }
+            
+            int numDific;
+            switch (dific){
+                case "Fácil": numDific = 0; break;
+                case "Médio": numDific = 1; break;
+                case "Difícil": numDific = 2; break;
+                default: throw new RuntimeException("não deveria entrar aqui");
+            }
+            
+            p.defineAtaque(new Ataque("Sem ataque", 0));
+            
+            new JanelaPrincipal(p, numDific).setVisible(true);
+            fechaJanela();
         });
     }
 

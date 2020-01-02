@@ -3,7 +3,6 @@ package jogoInterface;
 import jogoInterface.Alquimista.JanelaAlquimista;
 import jogoInterface.Comerciante.JanelaComerciante;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,8 +19,8 @@ import jogoCodigo.Ataque;
 import jogoCodigo.Comida.Comida;
 import jogoCodigo.BancoDados.EnumPocao;
 import jogoCodigo.Personagem.Inimigo;
-import jogoCodigo.Item;
-import jogoCodigo.ItemConstruivel;
+import jogoCodigo.Item.Item;
+import jogoCodigo.Item.ItemConstruivel;
 import jogoCodigo.Listener.ListenerAtributos;
 import jogoCodigo.Listener.ListenerPasseio;
 import jogoCodigo.Personagem.Personagem;
@@ -138,8 +137,9 @@ public class JanelaPrincipal extends Janela {
         int ultimoSel = comboAtaques.getSelectedIndex();
         comboAtaques.removeAllItems();
         
-        for (Ataque a: ataques)
+        ataques.forEach((a) -> {
             comboAtaques.addItem(a.getNome());
+        });
         
         comboAtaques.setSelectedIndex(ultimoSel == -1 ? 0 : ultimoSel);
     }
@@ -168,27 +168,19 @@ public class JanelaPrincipal extends Janela {
         ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
         
         final ScheduledFuture<?> barraService = ses
-                .scheduleWithFixedDelay(new Runnable(){
-            @Override
-            public void run(){
-                int valorBarra;
-                
-                barrasPocao[pos] -= 1;
-                valorBarra = (int) (((float) barrasPocao[pos]/60)*100);
-                barra.setValue(valorBarra);
-            }
-            
+                .scheduleWithFixedDelay(() -> {
+                    int valorBarra;
+                    
+                    barrasPocao[pos] -= 1;
+                    valorBarra = (int) (((float) barrasPocao[pos]/60)*100);
+                    barra.setValue(valorBarra);
         }, 0L, 1L, TimeUnit.SECONDS);
         
-        ses.schedule(new Runnable(){
-            @Override
-            public void run(){
-                barraService.cancel(true);
-                personagem.retiraAtributos(p.getAtributos());
-                barrasPocao[pos] = 0;
-            }
+        ses.schedule(() -> {
+            barraService.cancel(true);
+            personagem.retiraAtributos(p.getAtributos());
+            barrasPocao[pos] = 0;
         }, 60L, TimeUnit.SECONDS);
-        
     }
     
     /**
@@ -444,136 +436,116 @@ public class JanelaPrincipal extends Janela {
          * comidas ou poções, e também fazer trocas de itens com o alquimista,
          * que dependendo de cada item irá gerá uma poção correspondente.
          */
-        this.btnPassear.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                if (btnPassear.getText().equals("Dar um passeio")){
-                    btnComerciante.setEnabled(false);
-                    btnAlquimista.setEnabled(false);
-                    
-                    if (!ThreadPasseio.isInstance())
-                        tp = ThreadPasseio.getInstance(personagem, nivelDificuldade, listenerPasseio);
-                    
-                    tp.start();
-                    
-                    atualizaLog(personagem.getApelido() + " está dando uma volta...");
-                    btnPassear.setText("Voltar para casa");
-
-                } else {
-                    tp.interrupt();
-                    atualizaLog(personagem.getApelido() + " voltou para casa.");
-                    btnPassear.setText("Dar um passeio");
-                    btnComerciante.setEnabled(true);
-                    btnAlquimista.setEnabled(true);
-                }
+        this.btnPassear.addActionListener((ActionEvent e) -> {
+            if (btnPassear.getText().equals("Dar um passeio")){
+                btnComerciante.setEnabled(false);
+                btnAlquimista.setEnabled(false);
+                
+                if (!ThreadPasseio.isInstance())
+                    tp = ThreadPasseio.getInstance(personagem, nivelDificuldade, listenerPasseio);
+                
+                tp.start();
+                
+                atualizaLog(personagem.getApelido() + " está dando uma volta...");
+                btnPassear.setText("Voltar para casa");
+                
+            } else {
+                tp.interrupt();
+                atualizaLog(personagem.getApelido() + " voltou para casa.");
+                btnPassear.setText("Dar um passeio");
+                btnComerciante.setEnabled(true);
+                btnAlquimista.setEnabled(true);
             }
         });
         
         /**
          * Gerencia o uso de itens do jogo, ou seja, poções e comidas.
          */
-        this.btnUsarItem.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                int lin = tabelaMochila.getSelectedRow();
-                int col = tabelaMochila.getSelectedColumn();
-                if (col == 0) return;
-                
-                switch (col){
-                    case 1: {
-                        if (personagem.getFome() == 0){
-                            atualizaLog(personagem.getApelido() + " não está com fome!");
-                            break;
-                        }
-                        
-                        Comida c = personagem.mochila.getComida(lin);
-                        
-                        if (c != null){
-                            int fomeRest = c.getFomeRest();
-                            String acao = fomeRest > 0 ? "diminuiu" : "aumentou";
-                            atualizaLog(personagem.getApelido() + " comeu " +
-                                    c.getNome() + " e " + acao + " " +
-                                    Math.abs(c.getFomeRest()) + " pontos de fome.");
-                            
-                            personagem.mochila.removeComida(lin);
-                            personagem.come(c);
-                        }
-                            
+        this.btnUsarItem.addActionListener((ActionEvent e) -> {
+            int lin = tabelaMochila.getSelectedRow();
+            int col = tabelaMochila.getSelectedColumn();
+            if (col == 0) return;
+            switch (col) {
+                case 1: {
+                    if (personagem.getFome() == 0){
+                        atualizaLog(personagem.getApelido() + " não está com fome!");
                         break;
                     }
                     
-                    case 2: {
-                        Pocao p = personagem.mochila.getPocao(lin);
-                        if (p == null) break;
-                        JProgressBar barra = null;
+                    Comida c = personagem.mochila.getComida(lin);
+                    
+                    if (c != null){
+                        int fomeRest = c.getFomeRest();
+                        String acao = fomeRest > 0 ? "diminuiu" : "aumentou";
+                        atualizaLog(personagem.getApelido() + " comeu " +
+                                c.getNome() + " e " + acao + " " +
+                                Math.abs(c.getFomeRest()) + " pontos de fome.");
                         
-                        if (p.getTipo() != EnumPocao.VIDA){
+                        personagem.mochila.removeComida(lin);
+                        personagem.come(c);
+                    }
+                    
+                    break;
+                }
+                case 2:
+                    {
+                        Pocao p1 = personagem.mochila.getPocao(lin);
+                        if (p1 == null) {
+                            break;
+                        }
+                        JProgressBar barra = null;
+                        if (p1.getTipo() != EnumPocao.VIDA) {
                             int pos;
-                            switch (p.getTipo()){
+                            switch (p1.getTipo()) {
                                 case FORCA: pos = 0; barra = barraPocaoForca; break;
                                 case SAGACIDADE: pos = 1; barra = barraPocaoSagacidade; break;
                                 default: throw new RuntimeException("não deveria entrar aqui");
                             }
-                            
-                            if (barrasPocao[pos] > 0){
+                            if (barrasPocao[pos] > 0) {
                                 atualizaLog("Uma poção desse tipo já esta em uso!");
                                 break;
-                                
-                            } else setBarraPocao(p, barra, pos);
+                            } else {
+                                setBarraPocao(p1, barra, pos);
+                            }
                         }
-                        
-                        atualizaLog(personagem.getApelido() + " consumiu a poção " + p.getNome() + "!");     
+                        atualizaLog(personagem.getApelido() + " consumiu a poção " + p1.getNome() + "!");     
                         personagem.mochila.removePocao(lin);
-                        personagem.bebe(p);
-                        
+                        personagem.bebe(p1);
                         break;
                     }
-                }
             }
         });
         
         /**
          * Limpa o campo de registros de ações do usuário.
          */
-        this.btnLimpaLog.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                tAreaLog.setText("");
-            }
+        this.btnLimpaLog.addActionListener((ActionEvent e) -> {
+            tAreaLog.setText("");
         });
         
         /**
          * Define um ataque atual para ser utilizado em batalhas.
          */
-        this.comboAtaques.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                int indAtaque = comboAtaques.getSelectedIndex();
-                if (indAtaque != -1){
-                    Ataque a = personagem.mochila.getAtaque(indAtaque);
-                    personagem.defineAtaque(a);
-                }
+        this.comboAtaques.addActionListener((var e) -> {
+            int indAtaque = comboAtaques.getSelectedIndex();
+            if (indAtaque != -1){
+                Ataque a = personagem.mochila.getAtaque(indAtaque);
+                personagem.defineAtaque(a);
             }
         });
         
         /**
          * Inicia o modo alquimista.
          */
-        this.btnAlquimista.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                new JanelaAlquimista(personagem).setVisible(true);
-            }
+        this.btnAlquimista.addActionListener((ActionEvent e) -> {
+            new JanelaAlquimista(personagem).setVisible(true);
         });
         
         /**
          * Inicia o modo comerciante.
          */
-        this.btnComerciante.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                new JanelaComerciante(personagem).setVisible(true);
-            }
+        this.btnComerciante.addActionListener((ActionEvent e) -> {
+            new JanelaComerciante(personagem).setVisible(true);
         });
         
         this.barraHPInimigo.setStringPainted(true);

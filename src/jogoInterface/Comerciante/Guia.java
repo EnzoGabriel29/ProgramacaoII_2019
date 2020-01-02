@@ -1,7 +1,6 @@
 package jogoInterface.Comerciante;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
@@ -10,7 +9,6 @@ import javax.swing.JList;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import jogoCodigo.Personagem.Personagem;
 
 abstract public class Guia<T> {
@@ -64,27 +62,21 @@ abstract public class Guia<T> {
             }
         });
         
-        spinnerQtd.addChangeListener(new ChangeListener(){
-            @Override
-            public void stateChanged(ChangeEvent e){
-                T item = (T) listaItens.getSelectedValue();
-                int qtd = (int) spinnerQtd.getValue();
-                int preco = getPreco(item);
-                int valorTotal = qtd * preco;
-                
-                setPreco(valorTotal);
-                atualizaBotaoComprar(item, qtd);
-            }
+        spinnerQtd.addChangeListener((ChangeEvent e) -> {
+            T item = (T) listaItens.getSelectedValue();
+            int qtd = (int) spinnerQtd.getValue();
+            int preco = getPreco(item);
+            int valorTotal = qtd * preco;
+            
+            setPreco(valorTotal);
+            atualizaBotaoComprar(item, qtd);
         });
         
-        botaoComprar.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){                
-                T item = (T) listaItens.getSelectedValue();
-                int qtd = (int) spinnerQtd.getValue();
-                
-                onItemComprado(item, qtd);
-            }
+        botaoComprar.addActionListener((ActionEvent e) -> {
+            T item = (T) listaItens.getSelectedValue();
+            int qtd = (int) spinnerQtd.getValue();
+            
+            onItemComprado(item, qtd);
         });
     }
     

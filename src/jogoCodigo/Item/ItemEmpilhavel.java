@@ -1,4 +1,4 @@
-package jogoCodigo;
+package jogoCodigo.Item;
 
 /**
  * Fornece uma classe base para itens empilháveis no jogo.

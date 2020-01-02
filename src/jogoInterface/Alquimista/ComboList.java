@@ -2,11 +2,10 @@ package jogoInterface.Alquimista;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-import jogoCodigo.ItemConstruivel;
+import jogoCodigo.Item.ItemConstruivel;
 
 /**
  * Fornece métodos para manipular uma JComboBox.
@@ -110,15 +109,9 @@ public class ComboList {
      */
     public void sort(){
         List<ItemConstruivel> actualItens = this.asList();
-        
-        Comparator<ItemConstruivel> comp = new Comparator<ItemConstruivel>(){
-            @Override
-            public int compare(ItemConstruivel i1, ItemConstruivel i2) {
-                return i1.getNome().compareTo(i2.getNome());
-            }
-        };
-        
-        Collections.sort(actualItens, comp);
+                
+        Collections.sort(actualItens, (ItemConstruivel i1,
+                ItemConstruivel i2) -> i1.getNome().compareTo(i2.getNome()));
         
         DefaultComboBoxModel sortedModel = new DefaultComboBoxModel(actualItens.toArray());
         this.comboBox.removeAllItems();

@@ -1,5 +1,6 @@
 package jogoCodigo;
 
+import jogoCodigo.Item.Item;
 import jogoCodigo.BancoDados.EnumArmadura;
 
 /**

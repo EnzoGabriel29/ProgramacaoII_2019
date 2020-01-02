@@ -3,7 +3,7 @@ package jogoCodigo.Comida;
 import java.util.Random;
 import jogoCodigo.BancoDados.EnumComida;
 import jogoCodigo.Calculo.ColecaoAleatoria;
-import jogoCodigo.ItemEmpilhavel;
+import jogoCodigo.Item.ItemEmpilhavel;
 
 /**
  * Providencia funções de comida no jogo. Cada personagem possui um atributo

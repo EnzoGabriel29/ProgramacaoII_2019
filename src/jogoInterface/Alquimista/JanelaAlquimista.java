@@ -7,10 +7,9 @@ import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JProgressBar;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import jogoCodigo.Atributos;
 import jogoCodigo.BancoDados.EnumPocao;
-import jogoCodigo.ItemConstruivel;
+import jogoCodigo.Item.ItemConstruivel;
 import jogoCodigo.Personagem.Personagem;
 
 /**
@@ -59,41 +58,29 @@ public class JanelaAlquimista extends javax.swing.JFrame {
             comboList.add(item);
         }   
         
-        this.btnDevolverItem.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                int lin = tabelaItens.getSelectedRow();
-                int col = tabelaItens.getSelectedColumn();
-                if (lin == -1 || col == -1) return;
-                if (tabelaItens.getValueAt(lin, col) == null) return;
-                manager.moveToUsuario(col, lin, 1);
-            }
+        this.btnDevolverItem.addActionListener((ActionEvent e) -> {
+            int lin = tabelaItens.getSelectedRow();
+            int col = tabelaItens.getSelectedColumn();
+            if (lin == -1 || col == -1) return;
+            if (tabelaItens.getValueAt(lin, col) == null) return;
+            manager.moveToUsuario(col, lin, 1);
         });
         
-        this.btnDevolverItens.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                manager.moveAllToUsuario();
-            }
+        this.btnDevolverItens.addActionListener((ActionEvent e) -> {
+            manager.moveAllToUsuario();
         });      
         
-        this.btnGeraPocao.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                personagem.mochila.adicionaPocao(EnumPocao.getPocao(pocaoDisponivel));
-                
-                for (int i = 0; i < 3; i++) manager.clearColumn(i);
-                setPocao(null);
-                ((AbstractTableModel) tabelaItens.getModel()).fireTableDataChanged();
-                barraItens.setValue(0);
-            }
+        this.btnGeraPocao.addActionListener((ActionEvent e) -> {
+            personagem.mochila.adicionaPocao(EnumPocao.getPocao(pocaoDisponivel));
+            
+            for (int i = 0; i < 3; i++) manager.clearColumn(i);
+            setPocao(null);
+            ((AbstractTableModel) tabelaItens.getModel()).fireTableDataChanged();
+            barraItens.setValue(0);
         }); 
         
-        this.btnVoltar.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                onClose();
-            }
+        this.btnVoltar.addActionListener((ActionEvent e) -> {
+            onClose();
         }); 
     }
     
@@ -138,9 +125,9 @@ public class JanelaAlquimista extends javax.swing.JFrame {
         List<ItemConstruivel> i2 = manager.getTableColumn(2).asList();
 
         int hashCodeTotal = 0;
-        for (ItemConstruivel item: i0) hashCodeTotal += item.hashCode();
-        for (ItemConstruivel item: i1) hashCodeTotal += item.hashCode();
-        for (ItemConstruivel item: i2) hashCodeTotal += item.hashCode();
+        for (var item: i0) hashCodeTotal += item.hashCode();
+        for (var item: i1) hashCodeTotal += item.hashCode();
+        for (var item: i2) hashCodeTotal += item.hashCode();
 
         switch (hashCodeTotal % 6){
             case 0: return EnumPocao.VIDA;

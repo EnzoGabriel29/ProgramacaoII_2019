@@ -1,13 +1,10 @@
 package jogoInterface;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JProgressBar;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import jogoCodigo.Armadura;
 import jogoCodigo.Personagem.Personagem;
 
@@ -31,15 +28,12 @@ public class ArmaduraManager {
         p.setEnabled(false);
         c.setEnabled(false);
         
-        c.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){                
-                Armadura a = personagem.getArmadura(pos);
-                
-                boolean cond = c.isSelected();
-                p.setEnabled(cond);
-                if (a != null) a.isMontada = cond;
-            }
+        c.addActionListener((ActionEvent e) -> {
+            Armadura a = personagem.getArmadura(pos);
+            
+            boolean cond = c.isSelected();
+            p.setEnabled(cond);
+            if (a != null) a.isMontada = cond;
         });
         
         this.checkBoxes.add(c);

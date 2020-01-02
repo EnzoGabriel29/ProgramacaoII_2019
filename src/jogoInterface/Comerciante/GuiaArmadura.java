@@ -50,7 +50,10 @@ public class GuiaArmadura extends Guia<EnumArmadura> {
 
     @Override
     protected void atualizaBotaoComprar(EnumArmadura item, int qtd){
-        botaoComprar.setEnabled(!personagem.possuiArmadura(item.getNome()));
+        int precoItem = item.getPreco() * qtd;
+        boolean cond1 = !personagem.possuiArmadura(item.getNome());
+        boolean cond2 = personagem.mochila.getCarteira() >= precoItem;
+        botaoComprar.setEnabled(cond1 && cond2);
     }
     
 }

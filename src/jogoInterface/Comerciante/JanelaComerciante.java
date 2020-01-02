@@ -1,7 +1,6 @@
 package jogoInterface.Comerciante;
 
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import jogoCodigo.BancoDados.EnumArmadura;
 import jogoCodigo.Personagem.Personagem;
 import jogoCodigo.BancoDados.EnumComida;
@@ -69,12 +68,7 @@ public class JanelaComerciante extends javax.swing.JFrame {
         this.initComponents();
         this.atualizaGuias();
         
-        menuGuias.addChangeListener(new ChangeListener(){
-            @Override
-            public void stateChanged(ChangeEvent e){
-                atualizaGuias();
-            }
-        });
+        menuGuias.addChangeListener((ChangeEvent e) -> atualizaGuias());
     }
 
     @SuppressWarnings("unchecked")
