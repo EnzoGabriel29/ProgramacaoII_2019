@@ -14,12 +14,12 @@ public class JanelaPreJogo extends Janela {
         
         if (string.contains(" ")){
             String[] strings = string.split(" ");
-            for (String s: strings){
-                strRet += capitalize(s);
-                strRet += " ";
-            }
             
-            return strRet;
+            String[] capStrings = new String[strings.length];
+            for (int i = 0; i < strings.length; i++)
+                capStrings[i] = capitalize(strings[i]);
+
+            return String.join(" ", capStrings);
         }
             
         strRet += Character.toUpperCase(string.charAt(0));

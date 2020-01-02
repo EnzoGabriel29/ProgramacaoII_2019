@@ -8,9 +8,7 @@ import jogoInterface.JanelaInicial;
  * @author Enzo
  */
 public class ClassePrincipal {
-    
     public static void main(String[] args){
         new JanelaInicial().setVisible(true);
-    }  
-    
+    }      
 }
